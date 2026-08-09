@@ -59,8 +59,8 @@ jobs:
           import json, os, sys
           from pathlib import Path
 
-          bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-          chat_id   = os.environ.get("TELEGRAM_CHAT_ID", "")
+          bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+          chat_id   = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 
           if not bot_token or not chat_id:
               print("Telegram not configured — skipping.")
@@ -153,6 +153,9 @@ jobs:
           try:
               with urllib.request.urlopen(req, timeout=10) as resp:
                   print(f"Telegram sent: {resp.status}")
-          except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+          except urllib.error.HTTPError as exc:
+              detail = exc.read().decode("utf-8", errors="replace")
+              print(f"Telegram notification failed, security scan completed: HTTP {exc.code}: {detail}")
+          except (urllib.error.URLError, TimeoutError) as exc:
               print(f"Telegram notification failed, security scan completed: {exc}")
           EOF

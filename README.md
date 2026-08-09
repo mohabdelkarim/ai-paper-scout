@@ -17,11 +17,9 @@ A small, automated pipeline that scans the newest **cs.AI** and **cs.LG** papers
 
 > **60 papers in. 3 decisions out.**
 >
-> Get the important ideas, the novelty behind them, and the practical reason to care — without opening 60 tabs.
+> Get the important ideas, the novelty behind them, and the practical reason to care, without opening 60 tabs.
 
 </div>
-
-<hr />
 
 ## Why this exists
 
@@ -34,10 +32,10 @@ AI research moves faster than most people can read. Paper Scout turns that strea
 Each selected paper is reduced to the questions that matter in practice:
 
 <ol>
-  <li><strong>TL;DR</strong> — what the paper does</li>
-  <li><strong>Key innovation</strong> — what is genuinely new</li>
-  <li><strong>Why it matters</strong> — what the idea could enable</li>
-  <li><strong>Tags and source</strong> — how to find and explore it later</li>
+  <li><strong>TL;DR</strong>: what the paper does</li>
+  <li><strong>Key innovation</strong>: what is genuinely new</li>
+  <li><strong>Why it matters</strong>: what the idea could enable</li>
+  <li><strong>Tags and source</strong>: how to find and explore it later</li>
 </ol>
 
 ## What you get
@@ -112,7 +110,7 @@ Copy-Item .env.example .env
 LLM_API_KEY=your_api_key_here
 ```
 
-The default configuration uses Groq. You can use any OpenAI-compatible provider by changing `LLM_API_BASE` and `LLM_MODEL` — no source changes required.
+The default configuration uses Groq. You can use any OpenAI-compatible provider by changing `LLM_API_BASE` and `LLM_MODEL`. No source changes required.
 
 ### 3. Run the scout
 
@@ -173,11 +171,11 @@ You can also start the distillation workflow manually from the **Actions** tab u
 To enable the scheduled run, add these repository secrets:
 
 <ol>
-  <li><code>LLM_API_KEY</code> — required</li>
-  <li><code>LLM_API_BASE</code> — optional provider endpoint</li>
-  <li><code>LLM_MODEL</code> — optional model name</li>
-  <li><code>TELEGRAM_BOT_TOKEN</code> — optional notifications</li>
-  <li><code>TELEGRAM_CHAT_ID</code> — optional notifications</li>
+  <li><code>LLM_API_KEY</code>: required</li>
+  <li><code>LLM_API_BASE</code>: optional provider endpoint</li>
+  <li><code>LLM_MODEL</code>: optional model name</li>
+  <li><code>TELEGRAM_BOT_TOKEN</code>: optional notifications</li>
+  <li><code>TELEGRAM_CHAT_ID</code>: optional notifications</li>
 </ol>
 
 ## Telegram digests
@@ -195,11 +193,11 @@ The message includes the selected papers, their summaries, source links, pipelin
 
 | Variable | Required | Default | Purpose |
 | --- | :---: | --- | --- |
-| `LLM_API_KEY` | Yes | — | API key for the selected LLM provider |
+| `LLM_API_KEY` | Yes |  | API key for the selected LLM provider |
 | `LLM_API_BASE` | No | `https://api.groq.com/openai/v1` | OpenAI-compatible API base URL |
 | `LLM_MODEL` | No | `llama-3.3-70b-versatile` | Model used for ranking and distillation |
-| `TELEGRAM_BOT_TOKEN` | No | — | Telegram bot token |
-| `TELEGRAM_CHAT_ID` | No | — | Destination chat ID |
+| `TELEGRAM_BOT_TOKEN` | No |  | Telegram bot token |
+| `TELEGRAM_CHAT_ID` | No |  | Destination chat ID |
 
 ## Reliability by design
 
@@ -270,8 +268,6 @@ The latest generated reports are listed below. This section is maintained automa
 [2026-05-31](reports/2026-05-31.md)<br />
 [2026-05-30](reports/2026-05-30.md)
 <!-- REPORT_INDEX -->
-
-<hr />
 
 <div align="center">
 

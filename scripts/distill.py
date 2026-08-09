@@ -171,42 +171,41 @@ def build_telegram_message(
     breaches      = [m for m in metrics if m.get("sla_ok") is False]
     total_tokens  = sum(m.get("tokens_used") or 0 for m in metrics)
     total_latency = round(sum(m.get("latency_s") or 0 for m in metrics), 1)
-    status_icon   = "✅" if pipeline_ok else "❌"
+    status_text   = "Success" if pipeline_ok else "Failed"
 
     lines = [
-        f"{status_icon} *AI Paper Scout — {today.isoformat()}*",
+        f"*AI Paper Scout*",
+        f"Date: {today.isoformat()} | Status: {status_text}",
         "",
-        "📄 *Top 3 AI Papers Today*",
+        f"*Top 3 Papers*",
     ]
     for i, paper in enumerate(distilled_papers, 1):
         tags = " ".join(f"`{t}`" for t in paper.get("tags", [])[:3])
         lines += [
             "",
             f"*{i}. {paper['title']}*",
-            f"💡 {paper.get('tldr', 'N/A')}",
-            f"🔬 _{paper.get('key_innovation', 'N/A')}_",
-            f"🌍 {paper.get('why_it_matters', 'N/A')}",
-            f"🏷 {tags}",
-            f"🔗 {paper.get('url', '')}",
+            f"Summary: {paper.get('tldr', 'N/A')}",
+            f"Innovation: {paper.get('key_innovation', 'N/A')}",
+            f"Impact: {paper.get('why_it_matters', 'N/A')}",
+            f"Tags: {tags}",
+            f"Link: {paper.get('url', '')}",
         ]
     lines += [
         "",
-        "─────────────────────",
-        "⚙️ *Pipeline Health*",
-        f"⏱ Total latency: `{total_latency}s`",
-        f"🔢 Tokens used: `{total_tokens}`",
+        "*Pipeline Health*",
+        f"Latency: {total_latency}s | Tokens: {total_tokens}",
     ]
     if breaches:
         breach_info = ", ".join(f"{b['step']} ({b['latency_s']}s)" for b in breaches)
-        lines.append(f"⚠️ SLA breaches: `{breach_info}`")
+        lines.append(f"SLA breaches: {breach_info}")
     else:
-        lines.append("✅ All SLA thresholds met")
+        lines.append("All SLA thresholds met")
     errors = [m["error"] for m in metrics if m.get("error")]
     if errors:
-        lines.append(f"🔴 Errors: `{'; '.join(errors[:2])}`")
+        lines.append(f"Errors: {'; '.join(errors[:2])}")
     lines += [
         "",
-        f"🔗 *Repository:* {REPOSITORY_URL}",
+        f"Repository: {REPOSITORY_URL}",
     ]
     return "\n".join(lines)
 
@@ -521,10 +520,11 @@ def main() -> Optional[Path]:
         logger.error(f"Pipeline failed: {exc}")
         save_health_metrics(today, metrics, pipeline_ok=False)
         send_telegram(
-            f"❌ *AI Paper Scout FAILED — {today.isoformat()}*\n\n"
-            f"🔴 Error: `{str(exc)[:200]}`\n"
-            f"⏱ Steps completed: {len(metrics)}\n\n"
-            f"🔗 *Repository:* {REPOSITORY_URL}"
+            f"*AI Paper Scout*\n"
+            f"Date: {today.isoformat()} | Status: Failed\n\n"
+            f"Error: {str(exc)[:200]}\n"
+            f"Steps completed: {len(metrics)}\n\n"
+            f"Repository: {REPOSITORY_URL}"
         )
         raise
 

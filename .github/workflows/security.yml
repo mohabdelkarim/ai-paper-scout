@@ -90,47 +90,44 @@ jobs:
           total = len(critical) + len(high) + len(medium) + len(secrets_found)
 
           if total == 0:
-              icon  = "\u2705"
-              title = "Security Scan PASSED"
+              title = "Security Scan Passed"
           elif critical:
-              icon  = "\U0001f6a8"
-              title = "CRITICAL Vulnerabilities Found!"
+              title = "Critical Vulnerabilities Found"
           elif high:
-              icon  = "\u26a0\ufe0f"
-              title = "HIGH Vulnerabilities Found"
+              title = "High Vulnerabilities Found"
           else:
-              icon  = "\U0001f4cb"
               title = "Medium / Info Findings"
 
           lines = [
-              f"{icon} *ai-paper-scout — {title}*",
+              f"*AI Paper Scout Security*",
+              f"Status: {title}",
               "",
-              f"\U0001f4e6 Scanned: `requirements.txt` + filesystem",
+              f"Scanned: requirements.txt + filesystem",
           ]
 
           if critical:
               lines.append(f"")
-              lines.append(f"\U0001f534 *CRITICAL ({len(critical)})*")
-              lines += [f"  \u2022 {v}" for v in critical[:5]]
+              lines.append(f"*Critical ({len(critical)})*")
+              lines += [f"  {v}" for v in critical[:5]]
           if high:
               lines.append(f"")
-              lines.append(f"\U0001f7e0 *HIGH ({len(high)})*")
-              lines += [f"  \u2022 {v}" for v in high[:5]]
+              lines.append(f"*High ({len(high)})*")
+              lines += [f"  {v}" for v in high[:5]]
           if medium:
               lines.append(f"")
-              lines.append(f"\U0001f7e1 *MEDIUM ({len(medium)})*")
-              lines += [f"  \u2022 {v}" for v in medium[:3]]
+              lines.append(f"*Medium ({len(medium)})*")
+              lines += [f"  {v}" for v in medium[:3]]
           if secrets_found:
               lines.append(f"")
-              lines.append(f"\U0001f511 *Secrets Detected ({len(secrets_found)})*")
-              lines += [f"  \u2022 {s}" for s in secrets_found[:3]]
+              lines.append(f"*Secrets Detected ({len(secrets_found)})*")
+              lines += [f"  {s}" for s in secrets_found[:3]]
 
           if total == 0:
-              lines.append("\nNo vulnerabilities or secrets detected. All clear!")
+              lines.append("\nNo vulnerabilities or secrets detected. All clear.")
 
           lines += [
               "",
-              f"\U0001f517 https://github.com/mohabdelkarim/ai-paper-scout/actions",
+              f"https://github.com/mohabdelkarim/ai-paper-scout/actions",
           ]
 
           message = "\n".join(lines)

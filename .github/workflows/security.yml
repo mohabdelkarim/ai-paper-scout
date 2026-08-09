@@ -1,0 +1,152 @@
+name: Security Scan (Trivy)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requirements.txt"
+      - "scripts/**"
+      - ".github/workflows/security.yml"
+  schedule:
+    - cron: "0 8 * * 1"  # Every Monday at 08:00 UTC (before Thursday distill run)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trivy-scan:
+    name: Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        id: trivy
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret
+          format: table
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: 0          # Never block CI — we notify via Telegram instead
+          ignore-unfixed: true  # Skip vulns with no fix yet (reduces noise)
+        continue-on-error: true
+
+      - name: Run Trivy JSON scan (for Telegram summary)
+        id: trivy-json
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret
+          format: json
+          output: trivy-results.json
+          severity: CRITICAL,HIGH,MEDIUM
+          ignore-unfixed: true
+        continue-on-error: true
+
+      - name: Parse results and send Telegram notification
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, sys
+          from pathlib import Path
+
+          bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+          chat_id   = os.environ.get("TELEGRAM_CHAT_ID", "")
+
+          if not bot_token or not chat_id:
+              print("Telegram not configured — skipping.")
+              sys.exit(0)
+
+          results_file = Path("trivy-results.json")
+          if not results_file.exists():
+              print("No results file found — skipping.")
+              sys.exit(0)
+
+          with open(results_file) as f:
+              data = json.load(f)
+
+          critical, high, medium = [], [], []
+          secrets_found = []
+
+          for result in data.get("Results", []):
+              for vuln in result.get("Vulnerabilities") or []:
+                  sev = vuln.get("Severity", "")
+                  entry = f"`{vuln.get('PkgName')}` {vuln.get('InstalledVersion')} → {vuln.get('FixedVersion', 'no fix')} ({vuln.get('VulnerabilityID')})"
+                  if sev == "CRITICAL":   critical.append(entry)
+                  elif sev == "HIGH":     high.append(entry)
+                  elif sev == "MEDIUM":   medium.append(entry)
+              for secret in result.get("Secrets") or []:
+                  secrets_found.append(f"`{secret.get('RuleID')}` in `{result.get('Target')}`")
+
+          total = len(critical) + len(high) + len(medium) + len(secrets_found)
+
+          if total == 0:
+              icon  = "\u2705"
+              title = "Security Scan PASSED"
+          elif critical:
+              icon  = "\U0001f6a8"
+              title = "CRITICAL Vulnerabilities Found!"
+          elif high:
+              icon  = "\u26a0\ufe0f"
+              title = "HIGH Vulnerabilities Found"
+          else:
+              icon  = "\U0001f4cb"
+              title = "Medium / Info Findings"
+
+          lines = [
+              f"{icon} *ai-paper-scout — {title}*",
+              "",
+              f"\U0001f4e6 Scanned: `requirements.txt` + filesystem",
+          ]
+
+          if critical:
+              lines.append(f"")
+              lines.append(f"\U0001f534 *CRITICAL ({len(critical)})*")
+              lines += [f"  \u2022 {v}" for v in critical[:5]]
+          if high:
+              lines.append(f"")
+              lines.append(f"\U0001f7e0 *HIGH ({len(high)})*")
+              lines += [f"  \u2022 {v}" for v in high[:5]]
+          if medium:
+              lines.append(f"")
+              lines.append(f"\U0001f7e1 *MEDIUM ({len(medium)})*")
+              lines += [f"  \u2022 {v}" for v in medium[:3]]
+          if secrets_found:
+              lines.append(f"")
+              lines.append(f"\U0001f511 *Secrets Detected ({len(secrets_found)})*")
+              lines += [f"  \u2022 {s}" for s in secrets_found[:3]]
+
+          if total == 0:
+              lines.append("\nNo vulnerabilities or secrets detected. All clear!")
+
+          lines += [
+              "",
+              f"\U0001f517 https://github.com/mohabdelkarim/ai-paper-scout/actions",
+          ]
+
+          message = "\n".join(lines)
+
+          import urllib.request
+          req = urllib.request.Request(
+              f"https://api.telegram.org/bot{bot_token}/sendMessage",
+              data=json.dumps({
+                  "chat_id": chat_id,
+                  "text": message,
+                  "parse_mode": "Markdown",
+                  "disable_web_page_preview": True,
+              }).encode(),
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          with urllib.request.urlopen(req, timeout=10) as resp:
+              print(f"Telegram sent: {resp.status}")
+          EOF

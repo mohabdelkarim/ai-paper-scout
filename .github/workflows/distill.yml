@@ -1,0 +1,55 @@
+name: AI Paper Scout
+
+on:
+  schedule:
+    - cron: "0 9 * * 4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  distill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run distillation
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_BASE: ${{ secrets.LLM_API_BASE }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/distill.py
+
+      - name: Generate report archive
+        run: python scripts/report_archive.py
+
+      - name: Configure git identity
+        run: |
+          git config user.name "MOHAbdelkarim"
+          git config user.email "mohaabdelkarim2@gmail.com"
+
+      - name: Commit and push changes
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "feat: add AI Paper Scout report ${TODAY}"
+            git push
+          fi

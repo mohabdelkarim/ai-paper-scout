@@ -450,6 +450,23 @@ def write_report(today: date, distilled_papers: list[dict], selection_reasoning:
     return report_path
 
 
+def _extract_report_tags(report_path: Path) -> list[str]:
+    """Extract unique tags from a report Markdown file."""
+    tags = []
+    try:
+        with open(report_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip().startswith("**Tags:**"):
+                    raw = line.split(":", 1)[1].strip()
+                    for t in raw.split(","):
+                        t = t.strip()
+                        if t and t not in tags:
+                            tags.append(t)
+    except Exception:
+        pass
+    return tags
+
+
 def update_readme_index(today: date, report_path: Path) -> bool:
     if not README_PATH.exists():
         logger.warning(f"{README_PATH} not found, skipping README index update")
@@ -460,22 +477,46 @@ def update_readme_index(today: date, report_path: Path) -> bool:
     if marker not in content:
         logger.warning(f"Marker '{marker}' not found in README, skipping update")
         return False
-    date_str    = today.isoformat()
-    report_link = f"[{date_str}](reports/{date_str}.md)"
+    date_str  = today.isoformat()
     parts = content.split(marker)
     if len(parts) != 3:
         logger.warning("Malformed REPORT_INDEX marker, skipping update")
         return False
     index_section = parts[1]
-    existing_dates = set()
-    for line in index_section.strip().split("\n"):
-        m = re.match(r"-?\[(\d{4}-\d{2}-\d{2})\]", line.strip())
-        if m:
-            existing_dates.add(m.group(1))
-    if date_str in existing_dates:
-        logger.info(f"Report for {date_str} already in README index, skipping")
-        return False
-    new_index   = index_section.strip() + "\n" + report_link + "\n"
+
+    report_rel = report_path.relative_to(REPORTS_DIR.parent).as_posix()
+
+    existing_links = re.findall(r"\[([^\]]+)\]\(([^)]+)\)", index_section)
+    for _, link_path in existing_links:
+        if link_path == report_rel:
+            logger.info(f"Report for {date_str} already in README index, skipping")
+            return False
+
+    tags = _extract_report_tags(report_path)
+    label = ", ".join(tags[:4]) if tags else "AI Research"
+    new_link = f"[{label}]({report_rel})"
+
+    all_entries = [new_link] + [f"[{lbl}]({pth})" for lbl, pth in existing_links]
+    max_total   = 50
+    per_column  = 10
+    max_columns = 5
+    all_entries = all_entries[:max_total]
+
+    num_columns = min((len(all_entries) + per_column - 1) // per_column, max_columns)
+
+    columns_html = []
+    for col_idx in range(num_columns):
+        start = col_idx * per_column
+        end   = start + per_column
+        items = all_entries[start:end]
+        lines = [item + "<br />" for item in items]
+        columns_html.append(
+            f'<div style="display:inline-block;width:20%;vertical-align:top;padding-right:1em;">\n'
+            + "\n".join(lines)
+            + "\n</div>"
+        )
+
+    new_index = "\n".join(columns_html) + "\n"
     new_content = parts[0] + marker + new_index + marker + parts[2]
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(new_content)

@@ -258,15 +258,17 @@ ai-paper-scout/
 The latest generated reports are listed below. This section is maintained automatically by `scripts/distill.py`.
 
 <!-- REPORT_INDEX -->
-[2026-06-20](reports/2026-06-20.md)<br />
-[2026-06-19](reports/2026-06-19.md)<br />
-[2026-06-17](reports/2026-06-17.md)<br />
-[2026-06-15](reports/2026-06-15.md)<br />
-[2026-06-13](reports/2026-06-13.md)<br />
-[2026-06-09](reports/2026-06-09.md)<br />
-[2026-06-07](reports/2026-06-07.md)<br />
-[2026-05-31](reports/2026-05-31.md)<br />
-[2026-05-30](reports/2026-05-30.md)
+<div style="display:inline-block;width:20%;vertical-align:top;padding-right:1em;">
+[Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-06-20.md)<br />
+[Large Language Models, Latent Reasoning, Working Memory](reports/2026-06-19.md)<br />
+[Vision-Language Models, Spatial Reasoning, Code Generation](reports/2026-06-17.md)<br />
+[Medical LLMs, Hallucination Detection, Clinical Decision Support](reports/2026-06-15.md)<br />
+[Vision-Language Models, Spatial Reasoning, Action Interface](reports/2026-06-13.md)<br />
+[Reinforcement Learning, Large Language Models, Trust Region](reports/2026-06-09.md)<br />
+[Code Language Models, Hypernetworks, LoRA Adapters](reports/2026-06-07.md)<br />
+[Large Language Models, Latent Reasoning, AI Alignment](reports/2026-05-31.md)<br />
+[Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-05-30.md)<br />
+</div>
 <!-- REPORT_INDEX -->
 
 <div align="center">

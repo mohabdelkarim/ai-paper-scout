@@ -21,7 +21,7 @@ A small, automated pipeline that scans the newest **cs.AI** and **cs.LG** papers
 
 </div>
 
----
+<hr />
 
 ## Why this exists
 
@@ -33,10 +33,12 @@ AI research moves faster than most people can read. Paper Scout turns that strea
 
 Each selected paper is reduced to the questions that matter in practice:
 
-- **TL;DR** — what the paper does
-- **Key innovation** — what is genuinely new
-- **Why it matters** — what the idea could enable
-- **Tags and source** — how to find and explore it later
+<ol>
+  <li><strong>TL;DR</strong> — what the paper does</li>
+  <li><strong>Key innovation</strong> — what is genuinely new</li>
+  <li><strong>Why it matters</strong> — what the idea could enable</li>
+  <li><strong>Tags and source</strong> — how to find and explore it later</li>
+</ol>
 
 ## What you get
 
@@ -170,11 +172,13 @@ You can also start the distillation workflow manually from the **Actions** tab u
 
 To enable the scheduled run, add these repository secrets:
 
-- `LLM_API_KEY` — required
-- `LLM_API_BASE` — optional provider endpoint
-- `LLM_MODEL` — optional model name
-- `TELEGRAM_BOT_TOKEN` — optional notifications
-- `TELEGRAM_CHAT_ID` — optional notifications
+<ol>
+  <li><code>LLM_API_KEY</code> — required</li>
+  <li><code>LLM_API_BASE</code> — optional provider endpoint</li>
+  <li><code>LLM_MODEL</code> — optional model name</li>
+  <li><code>TELEGRAM_BOT_TOKEN</code> — optional notifications</li>
+  <li><code>TELEGRAM_CHAT_ID</code> — optional notifications</li>
+</ol>
 
 ## Telegram digests
 
@@ -185,7 +189,7 @@ TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 ```
 
-The message includes the selected papers, their summaries, source links, and pipeline health. If a run fails, Paper Scout sends a failure alert when Telegram is configured. Leaving either variable blank safely disables notifications.
+The message includes the selected papers, their summaries, source links, pipeline health, and a direct link back to this repository. If a run fails, Paper Scout sends a failure alert with the repository link when Telegram is configured. Leaving either variable blank safely disables notifications.
 
 ## Configuration reference
 
@@ -201,12 +205,14 @@ The message includes the selected papers, their summaries, source links, and pip
 
 The pipeline is designed to produce useful output even when one dependency misbehaves:
 
-- Existing reports are not duplicated.
-- Rate-limited API calls retry up to three times with exponential backoff.
-- Ranking failures fall back to the first available papers.
-- A failed individual distillation gets a fallback summary while the other papers continue.
-- Telegram is optional and never blocks report generation.
-- Health data is saved for both successful and failed pipeline runs.
+<ol>
+  <li>Existing reports are not duplicated.</li>
+  <li>Rate-limited API calls retry up to three times with exponential backoff.</li>
+  <li>Ranking failures fall back to the first available papers.</li>
+  <li>A failed individual distillation gets a fallback summary while the other papers continue.</li>
+  <li>Telegram is optional and never blocks report generation.</li>
+  <li>Health data is saved for both successful and failed pipeline runs.</li>
+</ol>
 
 ### Health metrics
 
@@ -254,18 +260,18 @@ ai-paper-scout/
 The latest generated reports are listed below. This section is maintained automatically by `scripts/distill.py`.
 
 <!-- REPORT_INDEX -->
--[2026-06-20](reports/2026-06-20.md)
--[2026-06-19](reports/2026-06-19.md)
--[2026-06-17](reports/2026-06-17.md)
--[2026-06-15](reports/2026-06-15.md)
--[2026-06-13](reports/2026-06-13.md)
--[2026-06-09](reports/2026-06-09.md)
--[2026-06-07](reports/2026-06-07.md)
--[2026-05-31](reports/2026-05-31.md)
--[2026-05-30](reports/2026-05-30.md)
+[2026-06-20](reports/2026-06-20.md)<br />
+[2026-06-19](reports/2026-06-19.md)<br />
+[2026-06-17](reports/2026-06-17.md)<br />
+[2026-06-15](reports/2026-06-15.md)<br />
+[2026-06-13](reports/2026-06-13.md)<br />
+[2026-06-09](reports/2026-06-09.md)<br />
+[2026-06-07](reports/2026-06-07.md)<br />
+[2026-05-31](reports/2026-05-31.md)<br />
+[2026-05-30](reports/2026-05-30.md)
 <!-- REPORT_INDEX -->
 
----
+<hr />
 
 <div align="center">
 

@@ -28,6 +28,7 @@ LLM_API_BASE    = os.getenv("LLM_API_BASE", "https://api.groq.com/openai/v1")
 LLM_MODEL       = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID")
+REPOSITORY_URL    = "https://github.com/mohabdelkarim/ai-paper-scout"
 
 REPORTS_DIR = Path(__file__).parent.parent / "reports"
 HEALTH_DIR  = REPORTS_DIR / "health"
@@ -203,6 +204,10 @@ def build_telegram_message(
     errors = [m["error"] for m in metrics if m.get("error")]
     if errors:
         lines.append(f"🔴 Errors: `{'; '.join(errors[:2])}`")
+    lines += [
+        "",
+        f"🔗 *Repository:* {REPOSITORY_URL}",
+    ]
     return "\n".join(lines)
 
 
@@ -457,7 +462,7 @@ def update_readme_index(today: date, report_path: Path) -> bool:
         logger.warning(f"Marker '{marker}' not found in README, skipping update")
         return False
     date_str    = today.isoformat()
-    report_link = f"- [{date_str}](reports/{date_str}.md)"
+    report_link = f"[{date_str}](reports/{date_str}.md)"
     parts = content.split(marker)
     if len(parts) != 3:
         logger.warning("Malformed REPORT_INDEX marker, skipping update")
@@ -465,7 +470,7 @@ def update_readme_index(today: date, report_path: Path) -> bool:
     index_section = parts[1]
     existing_dates = set()
     for line in index_section.strip().split("\n"):
-        m = re.match(r"-\[(\d{4}-\d{2}-\d{2})\]", line.strip())
+        m = re.match(r"-?\[(\d{4}-\d{2}-\d{2})\]", line.strip())
         if m:
             existing_dates.add(m.group(1))
     if date_str in existing_dates:
@@ -518,7 +523,8 @@ def main() -> Optional[Path]:
         send_telegram(
             f"❌ *AI Paper Scout FAILED — {today.isoformat()}*\n\n"
             f"🔴 Error: `{str(exc)[:200]}`\n"
-            f"⏱ Steps completed: {len(metrics)}"
+            f"⏱ Steps completed: {len(metrics)}\n\n"
+            f"🔗 *Repository:* {REPOSITORY_URL}"
         )
         raise
 

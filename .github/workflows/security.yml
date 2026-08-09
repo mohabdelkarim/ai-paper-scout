@@ -80,12 +80,12 @@ jobs:
           for result in data.get("Results", []):
               for vuln in result.get("Vulnerabilities") or []:
                   sev = vuln.get("Severity", "")
-                  entry = f"`{vuln.get('PkgName')}` {vuln.get('InstalledVersion')} → {vuln.get('FixedVersion', 'no fix')} ({vuln.get('VulnerabilityID')})"
+                  entry = f"{vuln.get('PkgName')} {vuln.get('InstalledVersion')} -> {vuln.get('FixedVersion', 'no fix')} ({vuln.get('VulnerabilityID')})"
                   if sev == "CRITICAL":   critical.append(entry)
                   elif sev == "HIGH":     high.append(entry)
                   elif sev == "MEDIUM":   medium.append(entry)
               for secret in result.get("Secrets") or []:
-                  secrets_found.append(f"`{secret.get('RuleID')}` in `{result.get('Target')}`")
+                  secrets_found.append(f"{secret.get('RuleID')} in {result.get('Target')}")
 
           total = len(critical) + len(high) + len(medium) + len(secrets_found)
 
@@ -99,27 +99,27 @@ jobs:
               title = "Medium / Info Findings"
 
           lines = [
-              f"*AI Paper Scout Security*",
+              "AI Paper Scout Security",
               f"Status: {title}",
               "",
-              f"Scanned: requirements.txt + filesystem",
+              "Scanned: requirements.txt + filesystem",
           ]
 
           if critical:
-              lines.append(f"")
-              lines.append(f"*Critical ({len(critical)})*")
+              lines.append("")
+              lines.append(f"Critical ({len(critical)})")
               lines += [f"  {v}" for v in critical[:5]]
           if high:
-              lines.append(f"")
-              lines.append(f"*High ({len(high)})*")
+              lines.append("")
+              lines.append(f"High ({len(high)})")
               lines += [f"  {v}" for v in high[:5]]
           if medium:
-              lines.append(f"")
-              lines.append(f"*Medium ({len(medium)})*")
+              lines.append("")
+              lines.append(f"Medium ({len(medium)})")
               lines += [f"  {v}" for v in medium[:3]]
           if secrets_found:
-              lines.append(f"")
-              lines.append(f"*Secrets Detected ({len(secrets_found)})*")
+              lines.append("")
+              lines.append(f"Secrets Detected ({len(secrets_found)})")
               lines += [f"  {s}" for s in secrets_found[:3]]
 
           if total == 0:
@@ -127,7 +127,7 @@ jobs:
 
           lines += [
               "",
-              f"https://github.com/mohabdelkarim/ai-paper-scout/actions",
+              "https://github.com/mohabdelkarim/ai-paper-scout/actions",
           ]
 
           message = "\n".join(lines)
@@ -138,7 +138,6 @@ jobs:
               data=json.dumps({
                   "chat_id": chat_id,
                   "text": message,
-                  "parse_mode": "Markdown",
                   "disable_web_page_preview": True,
               }).encode(),
               headers={"Content-Type": "application/json"},

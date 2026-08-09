@@ -139,9 +139,9 @@ def save_health_metrics(today: date, metrics: list, pipeline_ok: bool) -> Path:
 # ---------------------------------------------------------------------------
 
 def send_telegram(message: str) -> bool:
-    """Send a Markdown message via Telegram Bot API."""
+    """Send a plain-text message via Telegram Bot API."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        logger.info("Telegram not configured — skipping notification.")
+        logger.info("Telegram not configured, skipping notification.")
         return False
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     try:
@@ -150,7 +150,6 @@ def send_telegram(message: str) -> bool:
             json={
                 "chat_id": TELEGRAM_CHAT_ID,
                 "text": message,
-                "parse_mode": "Markdown",
                 "disable_web_page_preview": True,
             },
             timeout=10,
@@ -174,16 +173,16 @@ def build_telegram_message(
     status_text   = "Success" if pipeline_ok else "Failed"
 
     lines = [
-        f"*AI Paper Scout*",
+        "AI Paper Scout",
         f"Date: {today.isoformat()} | Status: {status_text}",
         "",
-        f"*Top 3 Papers*",
+        "Top 3 Papers",
     ]
     for i, paper in enumerate(distilled_papers, 1):
-        tags = " ".join(f"`{t}`" for t in paper.get("tags", [])[:3])
+        tags = " ".join(paper.get("tags", [])[:3])
         lines += [
             "",
-            f"*{i}. {paper['title']}*",
+            f"{i}. {paper['title']}",
             f"Summary: {paper.get('tldr', 'N/A')}",
             f"Innovation: {paper.get('key_innovation', 'N/A')}",
             f"Impact: {paper.get('why_it_matters', 'N/A')}",
@@ -192,7 +191,7 @@ def build_telegram_message(
         ]
     lines += [
         "",
-        "*Pipeline Health*",
+        "Pipeline Health",
         f"Latency: {total_latency}s | Tokens: {total_tokens}",
     ]
     if breaches:
@@ -451,17 +450,19 @@ def write_report(today: date, distilled_papers: list[dict], selection_reasoning:
 
 
 def _extract_report_tags(report_path: Path) -> list[str]:
-    """Extract unique tags from a report Markdown file."""
+    """Extract unique tags from the first paper in a report Markdown file."""
     tags = []
     try:
         with open(report_path, "r", encoding="utf-8") as f:
             for line in f:
-                if line.strip().startswith("**Tags:**"):
-                    raw = line.split(":", 1)[1].strip()
+                stripped = line.strip()
+                if stripped.startswith("**Tags:**"):
+                    raw = stripped.replace("**Tags:**", "").strip()
                     for t in raw.split(","):
                         t = t.strip()
                         if t and t not in tags:
                             tags.append(t)
+                    return tags
     except Exception:
         pass
     return tags
@@ -561,7 +562,7 @@ def main() -> Optional[Path]:
         logger.error(f"Pipeline failed: {exc}")
         save_health_metrics(today, metrics, pipeline_ok=False)
         send_telegram(
-            f"*AI Paper Scout*\n"
+            f"AI Paper Scout\n"
             f"Date: {today.isoformat()} | Status: Failed\n\n"
             f"Error: {str(exc)[:200]}\n"
             f"Steps completed: {len(metrics)}\n\n"

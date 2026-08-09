@@ -493,13 +493,15 @@ def update_readme_index(today: date, report_path: Path) -> bool:
             return False
 
     tags = _extract_report_tags(report_path)
-    label = ", ".join(tags[:4]) if tags else "AI Research"
+    first_tag = tags[0] if tags else "AI Research"
+    date_label = today.strftime("%b %d")
+    label = f"{date_label} · {first_tag}"
     new_link = f"[{label}]({report_rel})"
 
     all_entries = [new_link] + [f"[{lbl}]({pth})" for lbl, pth in existing_links]
-    max_total   = 50
+    max_total   = 30
     per_column  = 10
-    max_columns = 5
+    max_columns = 3
     all_entries = all_entries[:max_total]
 
     num_columns = min((len(all_entries) + per_column - 1) // per_column, max_columns)

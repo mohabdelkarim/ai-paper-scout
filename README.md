@@ -26,17 +26,17 @@ A small, automated pipeline that scans the newest **cs.AI** and **cs.LG** papers
 The latest generated reports are listed below. This section is maintained automatically by `scripts/distill.py`.
 
 <!-- REPORT_INDEX -->
-| | | | | |
-| --- | --- | --- | --- | --- |
-| [Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-06-20.md) | | | | |
-| [Large Language Models, Latent Reasoning, Working Memory](reports/2026-06-19.md) | | | | |
-| [Vision-Language Models, Spatial Reasoning, Code Generation](reports/2026-06-17.md) | | | | |
-| [Medical LLMs, Hallucination Detection, Clinical Decision Support](reports/2026-06-15.md) | | | | |
-| [Vision-Language Models, Spatial Reasoning, Action Interface](reports/2026-06-13.md) | | | | |
-| [Reinforcement Learning, Large Language Models, Trust Region](reports/2026-06-09.md) | | | | |
-| [Code Language Models, Hypernetworks, LoRA Adapters](reports/2026-06-07.md) | | | | |
-| [Large Language Models, Latent Reasoning, AI Alignment](reports/2026-05-31.md) | | | | |
-| [Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-05-30.md) | | | | |
+| | | |
+| --- | --- | --- |
+| [Jun 20 · Robotics](reports/2026-06-20.md) | | |
+| [Jun 19 · Large Language Models](reports/2026-06-19.md) | | |
+| [Jun 17 · Vision-Language Models](reports/2026-06-17.md) | | |
+| [Jun 15 · Medical Multimodal LLMs](reports/2026-06-15.md) | | |
+| [Jun 13 · Vision-Language Models](reports/2026-06-13.md) | | |
+| [Jun 09 · Reinforcement Learning](reports/2026-06-09.md) | | |
+| [Jun 07 · Code Language Models](reports/2026-06-07.md) | | |
+| [May 31 · Large Language Models](reports/2026-05-31.md) | | |
+| [May 30 · Robotics](reports/2026-05-30.md) | | |
 <!-- REPORT_INDEX -->
 
 ## Why this exists

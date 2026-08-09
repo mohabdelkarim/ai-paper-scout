@@ -504,19 +504,17 @@ def update_readme_index(today: date, report_path: Path) -> bool:
 
     num_columns = min((len(all_entries) + per_column - 1) // per_column, max_columns)
 
-    columns_html = []
-    for col_idx in range(num_columns):
-        start = col_idx * per_column
-        end   = start + per_column
-        items = all_entries[start:end]
-        lines = [item + "<br />" for item in items]
-        columns_html.append(
-            f'<div style="display:inline-block;width:20%;vertical-align:top;padding-right:1em;">\n'
-            + "\n".join(lines)
-            + "\n</div>"
-        )
+    header    = "|" + "|".join([" "] * num_columns) + "|"
+    separator = "|" + "|".join(["---"] * num_columns) + "|"
+    rows = [header, separator]
+    for row_idx in range(per_column):
+        cells = []
+        for col_idx in range(num_columns):
+            idx = col_idx * per_column + row_idx
+            cells.append(all_entries[idx] if idx < len(all_entries) else " ")
+        rows.append("|" + "|".join(cells) + "|")
 
-    new_index = "\n".join(columns_html) + "\n"
+    new_index = "\n".join(rows) + "\n"
     new_content = parts[0] + marker + new_index + marker + parts[2]
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(new_content)

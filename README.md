@@ -21,6 +21,24 @@ A small, automated pipeline that scans the newest **cs.AI** and **cs.LG** papers
 
 </div>
 
+## Report archive
+
+The latest generated reports are listed below. This section is maintained automatically by `scripts/distill.py`.
+
+<!-- REPORT_INDEX -->
+| | | | | |
+| --- | --- | --- | --- | --- |
+| [Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-06-20.md) | | | | |
+| [Large Language Models, Latent Reasoning, Working Memory](reports/2026-06-19.md) | | | | |
+| [Vision-Language Models, Spatial Reasoning, Code Generation](reports/2026-06-17.md) | | | | |
+| [Medical LLMs, Hallucination Detection, Clinical Decision Support](reports/2026-06-15.md) | | | | |
+| [Vision-Language Models, Spatial Reasoning, Action Interface](reports/2026-06-13.md) | | | | |
+| [Reinforcement Learning, Large Language Models, Trust Region](reports/2026-06-09.md) | | | | |
+| [Code Language Models, Hypernetworks, LoRA Adapters](reports/2026-06-07.md) | | | | |
+| [Large Language Models, Latent Reasoning, AI Alignment](reports/2026-05-31.md) | | | | |
+| [Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-05-30.md) | | | | |
+<!-- REPORT_INDEX -->
+
 ## Why this exists
 
 AI research moves faster than most people can read. Paper Scout turns that stream into a compact weekly signal:
@@ -252,24 +270,6 @@ ai-paper-scout/
 | Telegram is silent | Confirm both Telegram variables are set and the bot can message the target chat |
 | Scheduled workflow does not run | Enable GitHub Actions and check the workflow's UTC schedule |
 | README report list does not update | Keep exactly two `REPORT_INDEX` markers in this file |
-
-## Report archive
-
-The latest generated reports are listed below. This section is maintained automatically by `scripts/distill.py`.
-
-<!-- REPORT_INDEX -->
-<div style="display:inline-block;width:20%;vertical-align:top;padding-right:1em;">
-[Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-06-20.md)<br />
-[Large Language Models, Latent Reasoning, Working Memory](reports/2026-06-19.md)<br />
-[Vision-Language Models, Spatial Reasoning, Code Generation](reports/2026-06-17.md)<br />
-[Medical LLMs, Hallucination Detection, Clinical Decision Support](reports/2026-06-15.md)<br />
-[Vision-Language Models, Spatial Reasoning, Action Interface](reports/2026-06-13.md)<br />
-[Reinforcement Learning, Large Language Models, Trust Region](reports/2026-06-09.md)<br />
-[Code Language Models, Hypernetworks, LoRA Adapters](reports/2026-06-07.md)<br />
-[Large Language Models, Latent Reasoning, AI Alignment](reports/2026-05-31.md)<br />
-[Robotics, Multimodal Learning, Dynamics-aware Perception](reports/2026-05-30.md)<br />
-</div>
-<!-- REPORT_INDEX -->
 
 <div align="center">
 

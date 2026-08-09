@@ -518,7 +518,7 @@ def update_readme_index(today: date, report_path: Path) -> bool:
         rows.append("|" + "|".join(cells) + "|")
 
     new_index = "\n".join(rows) + "\n"
-    new_content = parts[0] + marker + new_index + marker + parts[2]
+    new_content = parts[0] + marker + "\n" + new_index + marker + parts[2]
     with open(README_PATH, "w", encoding="utf-8") as f:
         f.write(new_content)
     logger.info("README index updated")

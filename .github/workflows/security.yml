@@ -127,7 +127,8 @@ jobs:
 
           lines += [
               "",
-              "https://github.com/mohabdelkarim/ai-paper-scout/actions",
+              "Actions: https://github.com/mohabdelkarim/ai-paper-scout/actions",
+              "Repository: https://github.com/mohabdelkarim/ai-paper-scout",
           ]
 
           message = "\n".join(lines)

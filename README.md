@@ -1,285 +1,278 @@
 <div align="center">
 
-<br/>
-
 # AI Paper Scout
 
-<p>
-  <img src="https://img.shields.io/badge/arXiv-cs.AI%20%7C%20cs.LG-b31b1b?style=flat-square&logo=arxiv&logoColor=white" />
-  &nbsp;
-  <img src="https://img.shields.io/badge/Groq%20LPU-powered-F55036?style=flat-square" />
-  &nbsp;
-  <img src="https://img.shields.io/github/actions/workflow/status/mohabdelkarim/ai-paper-scout/distill.yml?style=flat-square&label=weekly%20run&logo=github-actions&logoColor=white" />
-  &nbsp;
-  <img src="https://img.shields.io/badge/cost%20per%20run-%240.002-22c55e?style=flat-square" />
-  &nbsp;
-  <img src="https://img.shields.io/badge/Telegram-notifications-26A5E4?style=flat-square&logo=telegram&logoColor=white" />
-</p>
+### Research signal, without the research overload.
 
-<br/>
+A small, automated pipeline that scans the newest **cs.AI** and **cs.LG** papers on arXiv, uses an OpenAI-compatible LLM to select the three most useful papers, and turns them into practical Markdown briefings.
 
-> ### 100+ AI papers land on arXiv every day. You don't have time for that.
-> **AI Paper Scout reads them all, picks the 3 that matter, and tells you why.**
-> Every Thursday. Automatically. In your repo and on your phone.
+<br />
 
-<br/>
+[![Weekly distillation](https://img.shields.io/github/actions/workflow/status/mohabdelkarim/ai-paper-scout/distill.yml?style=for-the-badge&label=weekly%20distillation&logo=githubactions&logoColor=white)](https://github.com/mohabdelkarim/ai-paper-scout/actions/workflows/distill.yml)
+[![Python](https://img.shields.io/badge/python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![arXiv](https://img.shields.io/badge/source-arXiv-B31B1B?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/)
+![Open source](https://img.shields.io/badge/open%20source-ready-16A34A?style=for-the-badge)
+
+<br />
+
+> **60 papers in. 3 decisions out.**
+>
+> Get the important ideas, the novelty behind them, and the practical reason to care — without opening 60 tabs.
 
 </div>
 
-## Features
+---
+
+## Why this exists
+
+AI research moves faster than most people can read. Paper Scout turns that stream into a compact weekly signal:
+
+| Input | Reasoning | Output |
+| --- | --- | --- |
+| The newest 60 papers from `cs.AI` and `cs.LG` | LLM ranking followed by structured distillation | Three readable reports with direct arXiv links |
+
+Each selected paper is reduced to the questions that matter in practice:
+
+- **TL;DR** — what the paper does
+- **Key innovation** — what is genuinely new
+- **Why it matters** — what the idea could enable
+- **Tags and source** — how to find and explore it later
+
+## What you get
 
 <div align="center">
 
-| | | | | | |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Auto-fetch** | **LLM Ranking** | **Distilled Reports** | **Telegram Alerts** | **Security Scanning** | **Health Metrics** |
-| 60 papers from arXiv | Top 3 selected by AI | Clean Markdown | Digest on your phone | Trivy + secret scan | SLA, tokens, latency |
+| Signal | What Paper Scout does for you |
+| :---: | --- |
+| `01` | Fetches the latest papers automatically from arXiv |
+| `02` | Ranks candidates with any OpenAI-compatible LLM endpoint |
+| `03` | Distills the top three into consistent Markdown reports |
+| `04` | Builds a searchable, themeable HTML archive |
+| `05` | Sends optional digests and failure alerts through Telegram |
+| `06` | Records latency, token usage, retries, errors, and SLA breaches |
 
 </div>
 
-<br/>
-
-## The Pipeline
+## The flow
 
 ```mermaid
 flowchart LR
-    A(["arXiv\n cs.AI · cs.LG"]):::red -->|"fetch 60 papers"| B
-    B(["LLM Ranker\n Groq LPU"]):::dark -->|"score · select top 3"| C
-    C(["Distiller"]):::mid -->|"TL;DR · Innovation · Impact · Tags"| D
-    D(["Report\n YYYY-MM-DD.md"]):::purple -->|"commit & push"| E
-    E(["Telegram\n + HTML Archive"]):::blue
+    A["arXiv\ncs.AI + cs.LG"] -->|"fetch 60"| B["LLM ranker"]
+    B -->|"select top 3"| C["distiller"]
+    C -->|"TL;DR + innovation + impact"| D["Markdown report"]
+    D --> E["HTML archive"]
+    D --> F["Telegram digest"]
 
-    classDef red    fill:#b31b1b,color:#fff,stroke:none
-    classDef dark   fill:#18181b,color:#fff,stroke:none
-    classDef mid    fill:#27272a,color:#fff,stroke:none
-    classDef purple fill:#3b0764,color:#fff,stroke:none
-    classDef blue   fill:#1d4ed8,color:#fff,stroke:none
+    classDef source fill:#B31B1B,color:#fff,stroke:#B31B1B
+    classDef engine fill:#111827,color:#fff,stroke:#111827
+    classDef output fill:#4F46E5,color:#fff,stroke:#4F46E5
+    classDef optional fill:#0F766E,color:#fff,stroke:#0F766E
+    class A source
+    class B,C engine
+    class D,E output
+    class F optional
 ```
 
-<br/>
+## Quick start
 
-<div align="center">
-<table>
-<tr>
-<td align="center" width="175"><strong>TL;DR</strong><br/><sup>What the paper does<br/>in one sentence</sup></td>
-<td align="center" width="175"><strong>Key Innovation</strong><br/><sup>The specific technique<br/>or finding that is new</sup></td>
-<td align="center" width="175"><strong>Why It Matters</strong><br/><sup>What you can concretely<br/>build with this</sup></td>
-<td align="center" width="175"><strong>Tags</strong><br/><sup><code>rag</code> &nbsp; <code>vision-language</code><br/><code>fine-tuning</code></sup></td>
-<td align="center" width="175"><strong>Link</strong><br/><sup>Direct arXiv link,<br/>no paywalls</sup></td>
-</tr>
-</table>
-</div>
-
-<br/>
-
-## Quick Start
-
-**Prerequisites:** Python 3.9+ &nbsp;&middot;&nbsp; A free [Groq API key](https://console.groq.com) (takes 30 seconds)
-
-**1. Clone & install**
+### 1. Install
 
 ```bash
 git clone https://github.com/mohabdelkarim/ai-paper-scout.git
 cd ai-paper-scout
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# macOS / Linux
+python -m venv .venv
+source .venv/bin/activate
+
+# Windows PowerShell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
 pip install -r requirements.txt
 ```
 
-**2. Add your API key**
+Requires **Python 3.9 or newer**.
+
+### 2. Configure an LLM provider
+
+Copy the example file and add your key:
 
 ```bash
+# macOS / Linux
 cp .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
 ```
 
-Open `.env` and set:
-
-```
-LLM_API_KEY=gsk_...        # your Groq key — free tier is enough
+```dotenv
+LLM_API_KEY=your_api_key_here
 ```
 
-**3. Run**
+The default configuration uses Groq. You can use any OpenAI-compatible provider by changing `LLM_API_BASE` and `LLM_MODEL` — no source changes required.
+
+### 3. Run the scout
 
 ```bash
 python scripts/distill.py
 ```
 
-In ~30 seconds you get:
+The pipeline fetches, ranks, distills, and writes a dated report to `reports/`. It also saves a health snapshot for that run.
 
-```
-reports/
-├── 2026-06-20.md          ← today's 3 papers, ranked and distilled
-└── health/
-    └── 2026-06-20.json    ← pipeline metrics (latency, tokens, SLA)
-```
-
-**4. Generate the HTML archive** (optional)
+### 4. Build the archive
 
 ```bash
 python scripts/report_archive.py
 ```
 
-Produces `reports/archive.html` — a searchable, themeable single-file archive of every report with pipeline health metrics.
+This creates `reports/archive.html`, a standalone searchable archive that can be opened locally or published as a static file.
 
-> **Want a different provider?** Set `LLM_API_BASE` and `LLM_MODEL` in `.env` to use OpenAI, Together, Mistral, Ollama, or any OpenAI-compatible endpoint. No code changes needed.
+## Example output
 
-## GitHub Actions — Set & Forget
-
-<div align="center"><br/>
-<strong>No server &nbsp;&middot;&nbsp; No infra &nbsp;&middot;&nbsp; No maintenance</strong><br/>
-<sub>Push once — a fresh digest arrives in your repo every Thursday at 09:00 UTC.</sub>
-<br/><br/>
-
-| | Step | |
-|:---:|---|:---:|
-| **1** | **Fork or push** this repo to your GitHub account | |
-| **2** | Go to **Settings → Secrets and variables → Actions** | |
-| **3** | Add the secrets below — then you're done | |
-
-</div>
-
-<br/>
-
-**Required secret**
-
-```
-LLM_API_KEY = gsk_...        ← your Groq key (free at console.groq.com)
+```text
+reports/
+├── 2026-06-20.md          # three selected and distilled papers
+├── 2026-06-19.md
+├── health/
+│   └── 2026-06-20.json    # latency, tokens, retries, SLA, errors
+└── archive.html            # generated searchable archive
 ```
 
-**Optional secrets**
+A report follows the same useful shape every time:
 
-| Secret | Example value | Effect |
-|---|---|---|
-| `LLM_API_BASE` | `https://api.openai.com/v1` | Point to OpenAI, Together, Mistral, Ollama… |
-| `LLM_MODEL` | `gpt-4o-mini` | Override the model used for ranking & distilling |
-| `TELEGRAM_BOT_TOKEN` | `123456:ABC-DEF…` | Enable Telegram notifications |
-| `TELEGRAM_CHAT_ID` | `123456789` | Where to send the digest |
+```markdown
+## 1. Paper title
 
-<br/>
+**Authors:** ...
 
-> **Run it right now →** go to **Actions → AI Paper Scout → Run workflow**
+**TL;DR:** ...
 
-## Telegram Notifications
+**Key Innovation:** ...
 
-When `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are set, every run sends a rich Markdown digest to your phone:
+**Why It Matters:** ...
 
-```
-AI Paper Scout — 2026-06-20
+**Tags:** ...
 
-Top 3 AI Papers Today
-
-1. VERITAS: Visual Verification for Robot Policies
-   Robots can now self-check their actions...
-   Gradient-free visual verifier at inference time...
-   Improves deployment reliability without retraining...
-   robotics  visual-verification  inference-time
-   https://arxiv.org/abs/...
-
-Pipeline Health
-   Total latency: 12.4s
-   Tokens used: 4200
-   All SLA thresholds met
+**Link:** https://arxiv.org/...
 ```
 
-Failure alerts are also sent automatically — you'll know immediately if something breaks.
+## Automation
 
-## Security Scanning
+The repository is ready for GitHub Actions:
 
-A weekly [Trivy](https://trivy.dev) scan runs every Monday, checking dependencies and the filesystem for vulnerabilities and leaked secrets. Results are sent via Telegram — critical findings are flagged as critical, highs as warnings, clean runs confirmed.
+| Workflow | Schedule | Purpose |
+| --- | --- | --- |
+| `distill.yml` | Thursdays at `09:00 UTC` | Generate reports, rebuild the archive, and commit changes |
+| `security.yml` | Mondays at `08:00 UTC` | Run Trivy vulnerability and secret scans |
 
-## Health Metrics & SLA Monitoring
+You can also start the distillation workflow manually from the **Actions** tab using `workflow_dispatch`.
 
-Every pipeline run records detailed metrics to `reports/health/YYYY-MM-DD.json`:
+To enable the scheduled run, add these repository secrets:
 
-| Metric | Description |
-|---|---|
-| **Latency per step** | Time spent on arXiv fetch, LLM ranking, each distillation |
-| **SLA breaches** | Steps that exceeded their time threshold (20s fetch, 35s ranking, 25s distill) |
-| **Token usage** | Total LLM tokens consumed per step and overall |
-| **Retry count** | API calls that needed exponential-backoff retries |
-| **Errors** | Any step-level errors with full context |
+- `LLM_API_KEY` — required
+- `LLM_API_BASE` — optional provider endpoint
+- `LLM_MODEL` — optional model name
+- `TELEGRAM_BOT_TOKEN` — optional notifications
+- `TELEGRAM_CHAT_ID` — optional notifications
 
-The HTML archive surfaces these as per-report badges and expandable metric grids.
+## Telegram digests
 
-## Reference
+Set both Telegram variables to receive a compact digest after each run:
 
-### Why Groq?
-
-Groq's LPU inference runs **~10× faster** than typical GPU inference — ranking 60 papers takes seconds, not minutes. The free tier covers all usage for this project. To use a different provider, set `LLM_API_BASE` and `LLM_MODEL` — no code changes needed.
-
-### Configuration
-
-| Variable | Required | Default | Notes |
-|---|---|---|---|
-| `LLM_API_KEY` | Yes | — | Your provider API key |
-| `LLM_API_BASE` | No | `https://api.groq.com/openai/v1` | Any OpenAI-compatible endpoint |
-| `LLM_MODEL` | No | `llama-3.3-70b-versatile` | Any model your provider supports |
-| `TELEGRAM_BOT_TOKEN` | No | — | Telegram bot token for notifications |
-| `TELEGRAM_CHAT_ID` | No | — | Telegram chat ID to send digest to |
-
-### Resilience
-
-| Scenario | What happens |
-|---|---|
-| Report already exists for today | Skipped — no duplicate commits |
-| LLM ranking fails | Falls back to first 3 fetched papers |
-| Single paper distillation fails | Writes fallback summary, continues |
-| `<!-- REPORT_INDEX -->` missing | Logs warning, skips safely |
-| API rate limit hit | 3 retries with exponential backoff |
-| Telegram not configured | Skips notification, pipeline continues |
-| Pipeline crashes | Error alert sent via Telegram, health JSON saved |
-
-### Project Structure
-
+```dotenv
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
 ```
+
+The message includes the selected papers, their summaries, source links, and pipeline health. If a run fails, Paper Scout sends a failure alert when Telegram is configured. Leaving either variable blank safely disables notifications.
+
+## Configuration reference
+
+| Variable | Required | Default | Purpose |
+| --- | :---: | --- | --- |
+| `LLM_API_KEY` | Yes | — | API key for the selected LLM provider |
+| `LLM_API_BASE` | No | `https://api.groq.com/openai/v1` | OpenAI-compatible API base URL |
+| `LLM_MODEL` | No | `llama-3.3-70b-versatile` | Model used for ranking and distillation |
+| `TELEGRAM_BOT_TOKEN` | No | — | Telegram bot token |
+| `TELEGRAM_CHAT_ID` | No | — | Destination chat ID |
+
+## Reliability by design
+
+The pipeline is designed to produce useful output even when one dependency misbehaves:
+
+- Existing reports are not duplicated.
+- Rate-limited API calls retry up to three times with exponential backoff.
+- Ranking failures fall back to the first available papers.
+- A failed individual distillation gets a fallback summary while the other papers continue.
+- Telegram is optional and never blocks report generation.
+- Health data is saved for both successful and failed pipeline runs.
+
+### Health metrics
+
+Each run writes `reports/health/YYYY-MM-DD.json` with:
+
+| Metric | What it tells you |
+| --- | --- |
+| Step latency | Time spent fetching, ranking, and distilling |
+| SLA breaches | Whether a step exceeded its configured threshold |
+| Token usage | Tokens used per step and across the run |
+| Retry count | How often transient API failures occurred |
+| Errors | Step-level failures and their context |
+
+## Project map
+
+```text
 ai-paper-scout/
 ├── .github/workflows/
-│   ├── distill.yml                ──  cron: every Thursday at 09:00 UTC
-│   └── security.yml               ──  Trivy scan: every Monday at 08:00 UTC
+│   ├── distill.yml          # scheduled research pipeline
+│   └── security.yml         # weekly Trivy scan
 ├── scripts/
-│   ├── distill.py                 ──  fetch → rank → distil → report → notify
-│   └── report_archive.py          ──  generates searchable HTML archive
+│   ├── distill.py           # fetch → rank → distill → report → notify
+│   └── report_archive.py    # Markdown reports → searchable HTML
 ├── reports/
-│   ├── YYYY-MM-DD.md              ──  one distilled report per run
-│   ├── health/YYYY-MM-DD.json     ──  pipeline metrics per run
-│   └── archive.html               ──  generated HTML archive (run report_archive.py)
-├── .env.example
-├── requirements.txt
+│   ├── YYYY-MM-DD.md        # generated paper briefings
+│   ├── health/              # generated pipeline metrics
+│   └── archive.html         # generated report browser
+├── .env.example             # configuration template
+├── requirements.txt         # pinned Python dependencies
 └── README.md
 ```
 
-### Troubleshooting
+## Troubleshooting
 
-**No papers fetched** — check connectivity to `export.arxiv.org` and confirm the `arxiv` package is installed.
+| Symptom | Check |
+| --- | --- |
+| No papers are fetched | Confirm internet access to `export.arxiv.org` and reinstall `arxiv` dependencies |
+| LLM request fails | Verify `LLM_API_KEY`, `LLM_API_BASE`, and `LLM_MODEL` match your provider |
+| Telegram is silent | Confirm both Telegram variables are set and the bot can message the target chat |
+| Scheduled workflow does not run | Enable GitHub Actions and check the workflow's UTC schedule |
+| README report list does not update | Keep exactly two `REPORT_INDEX` markers in this file |
 
-**LLM API errors** — verify `LLM_API_KEY` is valid and matches the provider at `LLM_API_BASE`.
+## Report archive
 
-**README index not updating** — ensure both `<!-- REPORT_INDEX -->` markers are present in this file.
+The latest generated reports are listed below. This section is maintained automatically by `scripts/distill.py`.
 
-**Workflow not triggering** — confirm GitHub Actions is enabled and the schedule is `0 9 * * 4`.
+<!-- REPORT_INDEX -->
+-[2026-06-20](reports/2026-06-20.md)
+-[2026-06-19](reports/2026-06-19.md)
+-[2026-06-17](reports/2026-06-17.md)
+-[2026-06-15](reports/2026-06-15.md)
+-[2026-06-13](reports/2026-06-13.md)
+-[2026-06-09](reports/2026-06-09.md)
+-[2026-06-07](reports/2026-06-07.md)
+-[2026-05-31](reports/2026-05-31.md)
+-[2026-05-30](reports/2026-05-30.md)
+<!-- REPORT_INDEX -->
 
-**Telegram not sending** — verify `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are set as repository secrets.
-
-## Report Archive
+---
 
 <div align="center">
 
-| Date | Report |
-|:---:|:---:|
-| Jun 20, 2026 | [→ read](reports/2026-06-20.md) |
-| Jun 19, 2026 | [→ read](reports/2026-06-19.md) |
-| Jun 17, 2026 | [→ read](reports/2026-06-17.md) |
-| Jun 15, 2026 | [→ read](reports/2026-06-15.md) |
-| Jun 13, 2026 | [→ read](reports/2026-06-13.md) |
-| Jun 09, 2026 | [→ read](reports/2026-06-09.md) |
-| Jun 07, 2026 | [→ read](reports/2026-06-07.md) |
-| May 31, 2026 | [→ read](reports/2026-05-31.md) |
-<!-- REPORT_INDEX -->
-<!-- REPORT_INDEX -->
+Built for curious engineers who want to spend less time searching and more time building.
 
-</div>
+[Explore the reports](reports/) · [View the workflow](.github/workflows/distill.yml) · [Open an issue](https://github.com/mohabdelkarim/ai-paper-scout/issues)
 
-<br/>
+<sub>Created by <a href="https://github.com/mohabdelkarim">@mohabdelkarim</a></sub>
 
-<div align="center">
-<sup>Built by <a href="https://github.com/mohabdelkarim">@mohabdelkarim</a> &middot; MIT License</sup>
 </div>

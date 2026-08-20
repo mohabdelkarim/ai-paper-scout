@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 LLM_API_KEY     = os.getenv("LLM_API_KEY")
 LLM_API_BASE    = os.getenv("LLM_API_BASE", "https://api.groq.com/openai/v1")
-LLM_MODEL       = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+LLM_MODEL       = os.getenv("LLM_MODEL", "openai/gpt-oss-20b")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 REPOSITORY_URL    = "https://github.com/mohabdelkarim/ai-paper-scout"

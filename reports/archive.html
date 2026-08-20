@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Paper Scout — Archive</title>
+<style>
+  :root {
+    --bg: #0e0e0f; --surface: #18181b; --surface2: #1f1f23;
+    --border: #2e2e33; --text: #e4e4e7; --muted: #71717a;
+    --accent: #4f98a3; --accent-hover: #227f8b;
+    --success: #6daa45; --error: #dd6974;
+    --radius: 0.5rem; --font: 'Inter', system-ui, sans-serif;
+  }
+  [data-theme="light"] {
+    --bg: #f7f6f2; --surface: #ffffff; --surface2: #f0efeb;
+    --border: #d4d1ca; --text: #28251d; --muted: #7a7974;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); font-size: 15px; background: var(--bg);
+         color: var(--text); line-height: 1.6; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  /* Layout */
+  header { position: sticky; top: 0; z-index: 100;
+           background: color-mix(in oklch, var(--bg) 90%, transparent);
+           backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+           padding: 0.75rem 1.5rem; display: flex;
+           align-items: center; justify-content: space-between; gap: 1rem; }
+  header h1 { font-size: 1rem; font-weight: 600; white-space: nowrap; }
+  header span { font-size: 0.8rem; color: var(--muted); }
+  .theme-btn { background: none; border: 1px solid var(--border);
+               color: var(--muted); border-radius: var(--radius);
+               padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.8rem;
+               transition: border-color 150ms, color 150ms; }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* Stats bar */
+  .stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .stat { background: var(--surface); border: 1px solid var(--border);
+          border-radius: var(--radius); padding: 0.6rem 1rem; font-size: 0.8rem;
+          color: var(--muted); }
+  .stat strong { display: block; font-size: 1.2rem; color: var(--text); }
+
+  /* Report cards */
+  .report { background: var(--surface); border: 1px solid var(--border);
+             border-radius: var(--radius); margin-bottom: 1.25rem;
+             overflow: hidden; }
+  .report-header { display: flex; align-items: center; justify-content: space-between;
+                   padding: 0.75rem 1rem; cursor: pointer;
+                   border-bottom: 1px solid transparent;
+                   transition: background 150ms; gap: 0.75rem; }
+  .report-header:hover { background: var(--surface2); }
+  .report.open .report-header { border-bottom-color: var(--border); }
+  .report-date { font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+  .report-meta { display: flex; gap: 0.5rem; align-items: center;
+                 flex-wrap: wrap; font-size: 0.75rem; color: var(--muted); }
+  .badge { display: inline-flex; align-items: center; gap: 0.25rem;
+            padding: 0.15rem 0.5rem; border-radius: 99px;
+            font-size: 0.7rem; font-weight: 500;
+            background: var(--surface2); border: 1px solid var(--border); }
+  .badge.ok  { color: var(--success); border-color: color-mix(in oklch, var(--success) 40%, transparent); }
+  .badge.err { color: var(--error);   border-color: color-mix(in oklch, var(--error)   40%, transparent); }
+  .chevron { margin-left: auto; color: var(--muted); transition: transform 200ms; }
+  .report.open .chevron { transform: rotate(180deg); }
+
+  .report-body { display: none; padding: 1rem; }
+  .report.open .report-body { display: block; }
+
+  /* Paper entries */
+  .paper { padding: 0.75rem; border-radius: calc(var(--radius) - 2px);
+           background: var(--surface2); margin-bottom: 0.75rem; }
+  .paper:last-child { margin-bottom: 0; }
+  .paper-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem; }
+  .paper-tldr { font-size: 0.82rem; color: var(--muted); margin-bottom: 0.4rem; }
+  .paper-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .tag { font-size: 0.7rem; padding: 0.1rem 0.4rem;
+          border-radius: 99px; background: color-mix(in oklch, var(--accent) 12%, var(--surface));
+          color: var(--accent); border: 1px solid color-mix(in oklch, var(--accent) 25%, transparent); }
+
+  /* Health table */
+  .health { margin-top: 1rem; font-size: 0.78rem; color: var(--muted);
+             border-top: 1px solid var(--border); padding-top: 0.75rem; }
+  .health-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                  gap: 0.4rem; margin-top: 0.4rem; }
+  .health-item { background: var(--surface); border: 1px solid var(--border);
+                  border-radius: calc(var(--radius) - 2px); padding: 0.4rem 0.6rem; }
+  .health-item span { display: block; font-size: 0.7rem; color: var(--muted); }
+  .health-item strong { font-size: 0.85rem; color: var(--text); }
+
+  /* Search */
+  .search-wrap { margin-bottom: 1.5rem; }
+  #search { width: 100%; background: var(--surface); border: 1px solid var(--border);
+             border-radius: var(--radius); padding: 0.5rem 0.75rem;
+             font-size: 0.88rem; color: var(--text); outline: none;
+             transition: border-color 150ms; }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--muted); }
+
+  footer { text-align: center; font-size: 0.75rem; color: var(--muted);
+            padding: 2rem; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🤖 AI Paper Scout &mdash; Archive</h1>
+  <span>Generated 2026-08-20 19:34 UTC</span>
+  <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+</header>
+
+<main>
+  <div class="stats">
+    <div class="stat"><strong>10</strong>Reports</div>
+    <div class="stat"><strong>30</strong>Papers distilled</div>
+    <div class="stat"><strong>3,881</strong>Tokens used</div>
+    <div class="stat"><strong>100%</strong>Pipeline success rate</div>
+  </div>
+
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Search by title, tag, or date…" oninput="filterReports()">
+  </div>
+
+  <div id="reports">
+    <div class="report" data-date="2026-08-20"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-08-20</span><div class="report-meta"><span class="badge ok">✅ OK</span><span class="badge">⏱ 9.197s</span><span class="badge">🔢 3881 tokens</span><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2608.19197v1" target="_blank" rel="noopener">SPADE: Self-Play in Adaptive Synthetic Executable Environments</a></div><div class="paper-tldr">SPADE lets a single large language model generate its own executable training environments and learn to solve them, creating an adaptive self-play loop that continually raises task difficulty and improves performance.</div><div class="paper-tags"><span class="tag">self-play</span><span class="tag">synthetic-environments</span><span class="tag">language-models</span><span class="tag">reinforcement-learning</span><span class="tag">open-ended-learning</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2608.19182v1" target="_blank" rel="noopener">ADEPT: Accelerating Dexterity via Pre-Training and Post-Training using Reinforcement Learning</a></div><div class="paper-tldr">ADEPT trains a generic high‑DoF dexterous policy on a simple re‑posing task and then fine‑tunes it for diverse downstream tasks with a stable recipe, enabling zero‑shot sim‑to‑real transfer on multi‑fingered robots.</div><div class="paper-tags"><span class="tag">reinforcement-learning</span><span class="tag">sim-to-real</span><span class="tag">dexterous-manipulation</span><span class="tag">pretraining</span><span class="tag">joint-space-fabric</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2608.19181v1" target="_blank" rel="noopener">Beyond Teacher Likelihood: Group-Calibrated On-Policy Distillation for Long-Context Reasoning</a></div><div class="paper-tldr">GC-OPD blends dense token‑level teacher guidance with trajectory‑level verifier rewards by normalizing within rollout groups and redistributing the signed disagreement to improve long‑context reasoning.</div><div class="paper-tags"><span class="tag">on-policy-distillation</span><span class="tag">verifier-based-reward</span><span class="tag">group-normalization</span><span class="tag">long-context-reasoning</span><span class="tag">token-level-guidance</span></div></div><div class="health"><strong>Pipeline metrics</strong><div class="health-grid"><div class="health-item"><span>Latency</span><strong>9.197s</strong></div><div class="health-item"><span>Tokens</span><strong>3881</strong></div><div class="health-item"><span>Retries</span><strong>3</strong></div><div class="health-item"><span>SLA breach</span><strong>0</strong></div></div></div></div></div>
+<div class="report" data-date="2026-06-20"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-20</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.20560v1" target="_blank" rel="noopener">How Transparent is DiffusionGemma?</a></div><div class="paper-tldr">This paper investigates the transparency of DiffusionGemma, a diffusion-based large language model, by decomposing transparency into variable and algorithmic components and finding ways to improve interpretability without sacrificing performance</div><div class="paper-tags"><span class="tag">diffusion-models</span><span class="tag">language-models</span><span class="tag">model-transparency</span><span class="tag">model-interpretability</span><span class="tag">ai-debugging</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.20559v1" target="_blank" rel="noopener">UNIEGO: Proxies as Mediators for Unified Egocentric Video Representation Learning</a></div><div class="paper-tldr">This paper introduces UNIEGO, a unified egocentric video representation learning model that leverages a hierarchical multi-teacher distillation framework with proxy models to achieve state-of-the-art performance across various egocentric video understanding tasks</div><div class="paper-tags"><span class="tag">video-representation-learning</span><span class="tag">multi-teacher-distillation</span><span class="tag">proxy-based-learning</span><span class="tag">egocentric-video-understanding</span><span class="tag">hierarchical-learning-architectures</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.20557v1" target="_blank" rel="noopener">Optimal Deterministic Multicalibration and Omniprediction</a></div><div class="paper-tldr">This paper presents a deterministic algorithm for achieving optimal multicalibration and omniprediction, resolving an open problem in trustworthy machine learning</div><div class="paper-tags"><span class="tag">multicalibration</span><span class="tag">deterministic-prediction</span><span class="tag">machine-learning</span><span class="tag">trustworthy-ai</span><span class="tag">fairness-in-ai</span></div></div></div></div>
+<div class="report" data-date="2026-06-19"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-19</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.20557v1" target="_blank" rel="noopener">Optimal Deterministic Multicalibration and Omniprediction</a></div><div class="paper-tldr">This paper presents a deterministic algorithm that achieves optimal sample complexity for multicalibration, a property crucial for trustworthy machine learning, resolving a long-standing open problem</div><div class="paper-tags"><span class="tag">multicalibration</span><span class="tag">deterministic predictors</span><span class="tag">machine learning</span><span class="tag">trustworthy AI</span><span class="tag">sample complexity</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.20544v1" target="_blank" rel="noopener">Toward Calibrated Mixture-of-Experts Under Distribution Shift</a></div><div class="paper-tldr">This paper investigates the calibration of mixture-of-experts models under distribution shift and proposes an adversarial reweighting method to improve their accuracy-calibration tradeoff</div><div class="paper-tags"><span class="tag">calibration</span><span class="tag">mixture-of-experts</span><span class="tag">distribution_shift</span><span class="tag">ensemble_learning</span><span class="tag">adversarial_reweighting</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.20510v1" target="_blank" rel="noopener">Efficient and Sound Probabilistic Verification for AI Agents</a></div><div class="paper-tldr">This paper presents a framework for probabilistic verification of AI agents that operate in complex environments with ambiguous security policies, providing sound upper bounds on policy violation probabilities</div><div class="paper-tags"><span class="tag">AI Security</span><span class="tag">Probabilistic Verification</span><span class="tag">Distributionally Robust Optimization</span><span class="tag">Datalog</span><span class="tag">Runtime Monitoring</span></div></div></div></div>
+<div class="report" data-date="2026-06-17"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-17</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.18247v1" target="_blank" rel="noopener">Visual Verification Enables Inference-time Steering and Autonomous Policy Improvement</a></div><div class="paper-tldr">This paper proposes a framework called VERITAS that enables robots to learn from their experiences and improve their policies in real-time using visual verification and inference-time steering</div><div class="paper-tags"><span class="tag">robotics</span><span class="tag">reinforcement_learning</span><span class="tag">autonomous_systems</span><span class="tag">visual_verification</span><span class="tag">inference_time_steering</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.18208v1" target="_blank" rel="noopener">Looped World Models</a></div><div class="paper-tldr">This paper introduces Looped World Models, a novel architecture that iteratively refines environment states using a shared transformer block, achieving up to 100x parameter efficiency over conventional approaches</div><div class="paper-tags"><span class="tag">world models</span><span class="tag">transformer architectures</span><span class="tag">efficient computation</span><span class="tag">scalable simulation</span><span class="tag">artificial intelligence</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.18132v1" target="_blank" rel="noopener">Knowledge Reutilization in Meta-Reinforcement Learning</a></div><div class="paper-tldr">This paper proposes a meta-knowledge reutilization framework for meta-reinforcement learning, which enables the transfer of task-level knowledge across different agents and improves sample efficiency</div><div class="paper-tags"><span class="tag">meta-reinforcement learning</span><span class="tag">knowledge transfer</span><span class="tag">Bayesian non-parametric methods</span><span class="tag">task semantics</span><span class="tag">embodiment-specific control</span></div></div></div></div>
+<div class="report" data-date="2026-06-15"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-15</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.14697v1" target="_blank" rel="noopener">ClinHallu: A Benchmark for Diagnosing Stage-Wise Hallucinations in Medical MLLM Reasoning</a></div><div class="paper-tldr">ClinHallu is a benchmark for diagnosing stage-wise hallucinations in medical multimodal large language models, enabling fine-grained analysis of reasoning failures</div><div class="paper-tags"><span class="tag">Medical Multimodal Large Language Models</span><span class="tag">Hallucination Detection</span><span class="tag">Reasoning Process Analysis</span><span class="tag">Clinical Decision Support</span><span class="tag">Benchmarking</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.14686v1" target="_blank" rel="noopener">CottonLeafVision: An Explainable and Robust Deep Learning Framework for Cotton Leaf Disease Classification</a></div><div class="paper-tldr">This paper presents CottonLeafVision, a deep learning framework that accurately classifies cotton leaf diseases with 98% accuracy using a DenseNet201 model and provides explainability and robustness techniques</div><div class="paper-tags"><span class="tag">deep learning</span><span class="tag">computer vision</span><span class="tag">cotton leaf disease classification</span><span class="tag">explainable AI</span><span class="tag">agricultural technology</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.14608v1" target="_blank" rel="noopener">Expert-Driven Survival Machines: Improving Stratification and Interpretability in Multiple Clinical Cohorts</a></div><div class="paper-tldr">This paper proposes a novel deep learning framework that improves survival prediction in clinical cohorts by leveraging a mixture-of-experts approach to capture heterogeneous patient patterns</div><div class="paper-tags"><span class="tag">survival analysis</span><span class="tag">deep learning</span><span class="tag">mixture-of-experts</span><span class="tag">clinical cohorts</span><span class="tag">personalized medicine</span></div></div></div></div>
+<div class="report" data-date="2026-06-13"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-13</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.13673v1" target="_blank" rel="noopener">SpatialClaw: Rethinking Action Interface for Agentic Spatial Reasoning</a></div><div class="paper-tldr">This paper proposes SpatialClaw, a framework for spatial reasoning that uses code as the action interface, allowing vision-language models to flexibly compose and manipulate perception results for open-ended 3D/4D spatial reasoning tasks</div><div class="paper-tags"><span class="tag">vision-language models</span><span class="tag">spatial reasoning</span><span class="tag">action interface</span><span class="tag">code generation</span><span class="tag">3D/4D spatial reasoning</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.13633v1" target="_blank" rel="noopener">Aerial Wildfire Suppression Planning with a Hybrid CNN-Cellular Automata Fire Model</a></div><div class="paper-tldr">This paper presents a framework for aerial wildfire suppression planning using a hybrid CNN-Cellular Automata fire model and gradient-based optimization to design effective intervention strategies</div><div class="paper-tags"><span class="tag">wildfire suppression</span><span class="tag">aerial firefighting</span><span class="tag">CNN-Cellular Automata</span><span class="tag">optimization</span><span class="tag">uncertainty quantification</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.13605v1" target="_blank" rel="noopener">Distribution-Agnostic Robust Trajectory Optimization via Chance-Constrained Reinforcement Learning</a></div><div class="paper-tldr">This paper presents a robust trajectory optimization framework using chance-constrained reinforcement learning that can handle uncertain conditions without requiring a specific distribution</div><div class="paper-tags"><span class="tag">reinforcement learning</span><span class="tag">trajectory optimization</span><span class="tag">robust control</span><span class="tag">chance-constrained optimization</span><span class="tag">spacecraft trajectory planning</span></div></div></div></div>
+<div class="report" data-date="2026-06-09"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-09</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.09821v1" target="_blank" rel="noopener">Rethinking the Divergence Regularization in LLM RL</a></div><div class="paper-tldr">This paper proposes Divergence Regularized Policy Optimization, a new method for stabilizing reinforcement learning in large language models by replacing hard masks with smooth regularizers</div><div class="paper-tags"><span class="tag">Reinforcement Learning</span><span class="tag">Large Language Models</span><span class="tag">Trust Region Optimization</span><span class="tag">Policy Optimization</span><span class="tag">Natural Language Processing</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.09764v1" target="_blank" rel="noopener">iOSWorld: A Benchmark for Personally Intelligent Phone Agents</a></div><div class="paper-tldr">This paper introduces iOSWorld, a benchmark for evaluating personally intelligent phone agents that can reason over a user's identity, history, and preferences across multiple iOS apps</div><div class="paper-tags"><span class="tag">Artificial Intelligence</span><span class="tag">Mobile Agents</span><span class="tag">Personalization</span><span class="tag">Benchmarking</span><span class="tag">Human-Computer Interaction</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.09751v1" target="_blank" rel="noopener">Collaborative Human-Agent Protocol (CHAP)</a></div><div class="paper-tldr">The Collaborative Human-Agent Protocol (CHAP) is a standardized protocol for human-agent collaboration, enabling accountable and transparent work across teams, time zones, and trust boundaries</div><div class="paper-tags"><span class="tag">human-agent collaboration</span><span class="tag">foundation models</span><span class="tag">protocol standards</span><span class="tag">accountability</span><span class="tag">transparency</span></div></div></div></div>
+<div class="report" data-date="2026-06-07"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-06-07</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.06492v1" target="_blank" rel="noopener">Code2LoRA: Hypernetwork-Generated Adapters for Code Language Models under Software Evolution</a></div><div class="paper-tldr">Code2LoRA is a hypernetwork framework that generates repository-specific adapters for code language models, enabling efficient and adaptive modeling of evolving codebases</div><div class="paper-tags"><span class="tag">code language models</span><span class="tag">hypernetworks</span><span class="tag">LoRA adapters</span><span class="tag">software evolution</span><span class="tag">repository-specific modeling</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.06467v1" target="_blank" rel="noopener">You Only Index Once: Cross-Layer Sparse Attention with Shared Routing</a></div><div class="paper-tldr">This paper proposes a new sparse attention method called cross-layer sparse attention, which improves the efficiency and quality of long-context inference in large language models</div><div class="paper-tags"><span class="tag">sparse attention</span><span class="tag">large language models</span><span class="tag">long-context inference</span><span class="tag">efficiency optimization</span><span class="tag">cross-layer sparse attention</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2606.06448v1" target="_blank" rel="noopener">Agent Memory: Characterization and System Implications of Stateful Long-Horizon Workloads</a></div><div class="paper-tldr">This paper characterizes and analyzes the system-level behavior of agent memory systems used in long-horizon tasks, providing insights and recommendations for improving their performance and efficiency</div><div class="paper-tags"><span class="tag">Agent Memory</span><span class="tag">Long-Horizon Workloads</span><span class="tag">LLM Agents</span><span class="tag">System Characterization</span><span class="tag">Artificial Intelligence</span></div></div></div></div>
+<div class="report" data-date="2026-05-31"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-05-31</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2605.30343v1" target="_blank" rel="noopener">Unlocking the Working Memory of Large Language Models for Latent Reasoning</a></div><div class="paper-tldr">This paper introduces a new method called Reasoning in Memory that enables large language models to perform latent reasoning using a working memory mechanism, improving their reasoning capabilities without generating intermediate tokens</div><div class="paper-tags"><span class="tag">large language models</span><span class="tag">latent reasoning</span><span class="tag">working memory</span><span class="tag">natural language processing</span><span class="tag">artificial intelligence</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2605.30334v1" target="_blank" rel="noopener">Demystifying Data Organization for Enhanced LLM Training</a></div><div class="paper-tldr">This paper investigates the impact of data organization on Large Language Model training efficiency and proposes guidelines and methods to optimize data ordering for improved model performance and stability</div><div class="paper-tags"><span class="tag">Large Language Models</span><span class="tag">Data Organization</span><span class="tag">Training Efficiency</span><span class="tag">Natural Language Processing</span><span class="tag">Deep Learning</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2605.30322v1" target="_blank" rel="noopener">Gram: Assessing sabotage propensities via automated alignment auditing</a></div><div class="paper-tldr">Researchers introduce Gram, a framework to assess AI agents' propensity for sabotage, finding that Gemini models misbehave in about 2-3% of simulated scenarios due to overeagerness</div><div class="paper-tags"><span class="tag">AI alignment</span><span class="tag">sabotage detection</span><span class="tag">automated auditing</span><span class="tag">agentic deployment</span><span class="tag">AI safety</span></div></div></div></div>
+<div class="report" data-date="2026-05-30"><div class="report-header" onclick="toggleReport(this)"><span class="report-date">2026-05-30</span><div class="report-meta"><span class="badge">3 papers</span></div><svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="report-body"><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2605.30350v1" target="_blank" rel="noopener">DynaFLIP: Rethinking Robotics Perception via Tri-Modal-Dynamics Guided Representation</a></div><div class="paper-tldr">DynaFLIP is a multimodal pre-training framework that enhances robot perception by incorporating motion understanding into visual representations through tri-modal-dynamics guidance</div><div class="paper-tags"><span class="tag">robotics</span><span class="tag">multimodal learning</span><span class="tag">dynamics-aware perception</span><span class="tag">representation learning</span><span class="tag">robot manipulation</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2605.30343v1" target="_blank" rel="noopener">Unlocking the Working Memory of Large Language Models for Latent Reasoning</a></div><div class="paper-tldr">This paper introduces a new method called Reasoning in Memory, which enables large language models to perform latent reasoning using a working memory mechanism, improving their reasoning capabilities without generating intermediate tokens</div><div class="paper-tags"><span class="tag">large language models</span><span class="tag">latent reasoning</span><span class="tag">working memory</span><span class="tag">natural language processing</span><span class="tag">artificial intelligence</span></div></div><div class="paper"><div class="paper-title"><a href="http://arxiv.org/abs/2605.30334v1" target="_blank" rel="noopener">Demystifying Data Organization for Enhanced LLM Training</a></div><div class="paper-tldr">This paper explores the impact of data organization on large language model training and proposes guidelines and methods to optimize data ordering for improved training efficiency and performance</div><div class="paper-tags"><span class="tag">Large Language Models</span><span class="tag">Data Organization</span><span class="tag">Training Efficiency</span><span class="tag">Natural Language Processing</span><span class="tag">Machine Learning</span></div></div></div></div>
+  </div>
+</main>
+
+<footer>AI Paper Scout &mdash; auto-generated archive &mdash; 2026-08-20 19:34 UTC</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+function toggleReport(el) {
+  el.closest('.report').classList.toggle('open');
+}
+function filterReports() {
+  const q = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.report').forEach(card => {
+    card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+// Open first report by default
+document.addEventListener('DOMContentLoaded', () => {
+  const first = document.querySelector('.report');
+  if (first) first.classList.add('open');
+});
+</script>
+</body>
+</html>

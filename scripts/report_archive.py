@@ -298,11 +298,13 @@ def _paper_card(paper: dict) -> str:
     tags  = [t.strip() for t in paper.get("tags", "").split(",") if t.strip()]
     tag_html = "".join(f'<span class="tag">{t}</span>' for t in tags)
     title_html = f'<a href="{url}" target="_blank" rel="noopener">{title}</a>' if url else title
+    tldr_html = f'<div class="paper-tldr">{tldr}</div>' if tldr else ""
+    tags_html = f'<div class="paper-tags">{tag_html}</div>' if tag_html else ""
     return (
         f'<div class="paper">'
         f'<div class="paper-title">{title_html}</div>'
-        f'{f"<div class=\"paper-tldr\">{tldr}</div>" if tldr else ""}'
-        f'{f"<div class=\"paper-tags\">{tag_html}</div>" if tag_html else ""}'
+        f'{tldr_html}'
+        f'{tags_html}'
         f'</div>'
     )
 

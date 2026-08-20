@@ -347,13 +347,15 @@ def generate_html(reports: list[dict], out_path: Path) -> None:
     report_cards  = "\n".join(_report_card(r) for r in reports)
     generated_at  = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
 
-    html = HTML_TEMPLATE.format(
-        generated_at   = generated_at,
-        total_reports  = len(reports),
-        total_papers   = total_papers,
-        total_tokens   = f"{total_tokens:,}",
-        success_rate   = success_rate,
-        report_cards   = report_cards,
+    # Use replace (not str.format): CSS braces in the template would KeyError.
+    html = (
+        HTML_TEMPLATE
+        .replace("{generated_at}", generated_at)
+        .replace("{total_reports}", str(len(reports)))
+        .replace("{total_papers}", str(total_papers))
+        .replace("{total_tokens}", f"{total_tokens:,}")
+        .replace("{success_rate}", str(success_rate))
+        .replace("{report_cards}", report_cards)
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(html, encoding="utf-8")

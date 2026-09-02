@@ -53,3 +53,41 @@ jobs:
             git commit -m "feat: add AI Paper Scout report ${TODAY}"
             git push
           fi
+
+      - name: Slack digest on success
+        if: success()
+        env:
+          SLACK_WEBHOOK_AI_PIPELINES: ${{ secrets.SLACK_WEBHOOK_AI_PIPELINES }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_AI_PIPELINES" ]; then exit 0; fi
+          TODAY=$(date +%Y-%m-%d)
+          REPORT="reports/${TODAY}.md"
+          if [ ! -f "$REPORT" ]; then REPORT=$(ls -t reports/*.md 2>/dev/null | head -1); fi
+          BODY=$(python -c "
+          from pathlib import Path
+          import sys
+          p = Path('${REPORT}')
+          if not p.exists():
+              print('Paper Scout report generated')
+              sys.exit(0)
+          lines = [l.strip() for l in p.read_text(encoding='utf-8').splitlines() if l.startswith('## ')]
+          print('\\n'.join(lines[:3]) or p.name)
+          ")
+          python scripts/slack_notify.py --digest \
+            --title "AI Paper Scout" \
+            --text "${BODY}" \
+            --webhook-env SLACK_WEBHOOK_AI_PIPELINES
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v4.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_ALERTS }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "CI failed: ${{ github.repository }} / ${{ github.workflow }}"
+            blocks:
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: "*${{ github.repository }}* — `${{ github.workflow }}` failed\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"

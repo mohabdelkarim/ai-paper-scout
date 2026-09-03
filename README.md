@@ -28,7 +28,9 @@ The latest generated reports are listed below. This section is maintained automa
 <!-- REPORT_INDEX -->
 | | |
 |---|---|
-|[Aug 27 · native-visual-reasoning](reports/2026-08-27.md)|[May 30 · Robotics](reports/2026-05-30.md)|
+|[Sep 03 · speech-brain-computer-interface](reports/2026-09-03.md)|[Jun 07 · Code Language Models](reports/2026-06-07.md)|
+|[Aug 27 · native-visual-reasoning](reports/2026-08-27.md)|[May 31 · Large Language Models](reports/2026-05-31.md)|
+|[May 30 · Robotics](reports/2026-05-30.md)| |
 |[Aug 20 · self-play](reports/2026-08-20.md)| |
 |[Jun 20 · Robotics](reports/2026-06-20.md)| |
 |[Jun 19 · Large Language Models](reports/2026-06-19.md)| |
@@ -36,8 +38,6 @@ The latest generated reports are listed below. This section is maintained automa
 |[Jun 15 · Medical Multimodal LLMs](reports/2026-06-15.md)| |
 |[Jun 13 · Vision-Language Models](reports/2026-06-13.md)| |
 |[Jun 09 · Reinforcement Learning](reports/2026-06-09.md)| |
-|[Jun 07 · Code Language Models](reports/2026-06-07.md)| |
-|[May 31 · Large Language Models](reports/2026-05-31.md)| |
 <!-- REPORT_INDEX -->
 
 ## Why this exists

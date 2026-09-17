@@ -1,0 +1,64 @@
+{
+  "date": "2026-09-17",
+  "pipeline_success": true,
+  "steps": [
+    {
+      "step": "arxiv_fetch",
+      "timestamp_utc": "2026-09-17T13:51:44.669153",
+      "latency_s": 0.912,
+      "sla_threshold_s": 20.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": null,
+      "error": null
+    },
+    {
+      "step": "llm_ranking",
+      "timestamp_utc": "2026-09-17T13:51:45.582381",
+      "latency_s": 6.362,
+      "sla_threshold_s": 35.0,
+      "sla_ok": true,
+      "retries": 3,
+      "tokens_used": null,
+      "error": null
+    },
+    {
+      "step": "llm_distill",
+      "timestamp_utc": "2026-09-17T13:51:51.944809",
+      "latency_s": 1.004,
+      "sla_threshold_s": 25.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 1302,
+      "error": null
+    },
+    {
+      "step": "llm_distill",
+      "timestamp_utc": "2026-09-17T13:51:52.949110",
+      "latency_s": 0.736,
+      "sla_threshold_s": 25.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 1061,
+      "error": null
+    },
+    {
+      "step": "llm_distill",
+      "timestamp_utc": "2026-09-17T13:51:53.685122",
+      "latency_s": 0.955,
+      "sla_threshold_s": 25.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 1143,
+      "error": null
+    }
+  ],
+  "summary": {
+    "total_steps": 5,
+    "sla_breaches": 0,
+    "total_retries": 3,
+    "total_tokens": 3506,
+    "total_latency_s": 9.969,
+    "errors": []
+  }
+}

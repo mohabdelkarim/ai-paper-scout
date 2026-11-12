@@ -28,16 +28,16 @@ The latest generated reports are listed below. This section is maintained automa
 <!-- REPORT_INDEX -->
 | | | |
 |---|---|---|
-|[Nov 05 · prompt-engineering](reports/2026-11-05.md)|[Jun 09 · Reinforcement Learning](reports/2026-06-09.md)|[Aug 20 · self-play](reports/2026-08-20.md)|
-|[Oct 29 · surface-aligned-primitives](reports/2026-10-29.md)|[Sep 10 · normalizing-flows](reports/2026-09-10.md)| |
-|[Sep 03 · speech-brain-computer-interface](reports/2026-09-03.md)|[Oct 01 · prompt-optimization](reports/2026-10-01.md)| |
-|[Oct 22 · reinforcement-learning](reports/2026-10-22.md)|[Sep 17 · tokenisation](reports/2026-09-17.md)| |
-|[Jun 17 · Vision-Language Models](reports/2026-06-17.md)|[Aug 27 · native-visual-reasoning](reports/2026-08-27.md)| |
-|[Jun 20 · Robotics](reports/2026-06-20.md)|[Oct 08 · research](reports/2026-10-08.md)| |
-|[Sep 24 · diffusion-models](reports/2026-09-24.md)|[Jun 19 · Large Language Models](reports/2026-06-19.md)| |
-|[Oct 15 · latent-diffusion](reports/2026-10-15.md)|[Jun 13 · Vision-Language Models](reports/2026-06-13.md)| |
-|[May 31 · Large Language Models](reports/2026-05-31.md)|[Jun 15 · Medical Multimodal LLMs](reports/2026-06-15.md)| |
-|[May 30 · Robotics](reports/2026-05-30.md)|[Jun 07 · Code Language Models](reports/2026-06-07.md)| |
+|[Nov 12 · reinforcement-learning](reports/2026-11-12.md)|[Oct 29 · surface-aligned-primitives](reports/2026-10-29.md)|[Sep 17 · tokenisation](reports/2026-09-17.md)|
+|[Jun 17 · Vision-Language Models](reports/2026-06-17.md)|[Sep 24 · diffusion-models](reports/2026-09-24.md)|[Jun 15 · Medical Multimodal LLMs](reports/2026-06-15.md)|
+|[May 30 · Robotics](reports/2026-05-30.md)|[Sep 10 · normalizing-flows](reports/2026-09-10.md)| |
+|[Nov 05 · prompt-engineering](reports/2026-11-05.md)|[Jun 19 · Large Language Models](reports/2026-06-19.md)| |
+|[Aug 27 · native-visual-reasoning](reports/2026-08-27.md)|[Sep 03 · speech-brain-computer-interface](reports/2026-09-03.md)| |
+|[Jun 07 · Code Language Models](reports/2026-06-07.md)|[Oct 15 · latent-diffusion](reports/2026-10-15.md)| |
+|[Jun 09 · Reinforcement Learning](reports/2026-06-09.md)|[Oct 01 · prompt-optimization](reports/2026-10-01.md)| |
+|[Jun 20 · Robotics](reports/2026-06-20.md)|[Jun 13 · Vision-Language Models](reports/2026-06-13.md)| |
+|[Aug 20 · self-play](reports/2026-08-20.md)|[Oct 22 · reinforcement-learning](reports/2026-10-22.md)| |
+|[Oct 08 · research](reports/2026-10-08.md)|[May 31 · Large Language Models](reports/2026-05-31.md)| |
 <!-- REPORT_INDEX -->
 
 ## Why this exists
@@ -183,7 +183,8 @@ The repository is ready for GitHub Actions:
 | Workflow | Schedule | Purpose |
 | --- | --- | --- |
 | `distill.yml` | Thursdays at `09:00 UTC` | Generate reports, rebuild the archive, and commit changes |
-| `security.yml` | Mondays at `08:00 UTC` | Run Trivy vulnerability and secret scans |
+| `test.yml` | On push / pull request | Run unit tests for ranking, parsing, and archive safety |
+| `security.yml` | Mondays at `08:00 UTC` | Block on leaked secrets, scan vulnerabilities, notify via Telegram |
 
 You can also start the distillation workflow manually from the **Actions** tab using `workflow_dispatch`.
 
@@ -214,7 +215,7 @@ The message includes the selected papers, their summaries, source links, pipelin
 | --- | :---: | --- | --- |
 | `LLM_API_KEY` | Yes |  | API key for the selected LLM provider |
 | `LLM_API_BASE` | No | `https://api.groq.com/openai/v1` | OpenAI-compatible API base URL |
-| `LLM_MODEL` | No | `llama-3.3-70b-versatile` | Model used for ranking and distillation |
+| `LLM_MODEL` | No | `qwen/qwen3.8-27b` | Model used for ranking and distillation |
 | `TELEGRAM_BOT_TOKEN` | No |  | Telegram bot token |
 | `TELEGRAM_CHAT_ID` | No |  | Destination chat ID |
 
@@ -224,11 +225,11 @@ The pipeline is designed to produce useful output even when one dependency misbe
 
 <ol>
   <li>Existing reports are not duplicated.</li>
-  <li>Rate-limited API calls retry up to three times with exponential backoff.</li>
-  <li>Ranking failures fall back to the first available papers.</li>
-  <li>A failed individual distillation gets a fallback summary while the other papers continue.</li>
+  <li>Transient API failures retry up to three times with exponential backoff. Oversized or auth failures are not retried.</li>
+  <li>Ranking uses a compact catalogue so it fits provider token budgets. If ranking still fails, the report is marked <strong>Degraded</strong> and uses the newest papers.</li>
+  <li>Unusable distillations are skipped. The pipeline tries the next candidate instead of writing placeholder text.</li>
   <li>Telegram is optional and never blocks report generation.</li>
-  <li>Health data is saved for both successful and failed pipeline runs.</li>
+  <li>Health data records ranking fallback, distill failures, and a degraded flag for every run.</li>
 </ol>
 
 ### Health metrics
@@ -241,6 +242,7 @@ Each run writes `reports/health/YYYY-MM-DD.json` with:
 | SLA breaches | Whether a step exceeded its configured threshold |
 | Token usage | Tokens used per step and across the run |
 | Retry count | How often transient API failures occurred |
+| Quality flags | Ranking fallback, distill failures, degraded status |
 | Errors | Step-level failures and their context |
 
 ## Project map
@@ -249,16 +251,20 @@ Each run writes `reports/health/YYYY-MM-DD.json` with:
 ai-paper-scout/
 ├── .github/workflows/
 │   ├── distill.yml          # scheduled research pipeline
-│   └── security.yml         # weekly Trivy scan
+│   ├── test.yml             # unit tests
+│   └── security.yml         # secret + vulnerability scans
 ├── scripts/
 │   ├── distill.py           # fetch → rank → distill → report → notify
-│   └── report_archive.py    # Markdown reports → searchable HTML
+│   ├── report_archive.py    # Markdown reports → searchable HTML
+│   └── slack_notify.py      # optional Slack digests
+├── tests/                   # unit tests (pytest)
 ├── reports/
 │   ├── YYYY-MM-DD.md        # generated paper briefings
 │   ├── health/              # generated pipeline metrics
 │   └── archive.html         # generated report browser
 ├── .env.example             # configuration template
-├── requirements.txt         # pinned Python dependencies
+├── requirements.txt         # pinned runtime dependencies
+├── requirements_dev.txt     # runtime + pytest
 └── README.md
 ```
 
@@ -268,6 +274,7 @@ ai-paper-scout/
 | --- | --- |
 | No papers are fetched | Confirm internet access to `export.arxiv.org` and reinstall `arxiv` dependencies |
 | LLM request fails | Verify `LLM_API_KEY`, `LLM_API_BASE`, and `LLM_MODEL` match your provider |
+| Report says Degraded | Ranking hit a provider limit or parse failure. Check `reports/health/` for `ranking_fallback` |
 | Telegram is silent | Confirm both Telegram variables are set and the bot can message the target chat |
 | Scheduled workflow does not run | Enable GitHub Actions and check the workflow's UTC schedule |
 | README report list does not update | Keep exactly two `REPORT_INDEX` markers in this file |

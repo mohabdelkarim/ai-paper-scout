@@ -20,8 +20,10 @@ def slack_post(
     if not url:
         print("No Slack webhook URL configured; skipping.", file=sys.stderr)
         return
+    if not url.startswith("https://hooks.slack.com/"):
+        raise ValueError("Refusing to post: webhook URL must be an https://hooks.slack.com/ endpoint")
 
-    payload: dict[str, Any] = {"text": text}
+    payload: dict[str, Any] = {"text": text[:3000]}
     if blocks:
         payload["blocks"] = blocks
 

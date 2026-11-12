@@ -9,9 +9,12 @@ A small, automated pipeline that scans the newest **cs.AI** and **cs.LG** papers
 <br />
 
 [![Weekly distillation](https://img.shields.io/github/actions/workflow/status/mohabdelkarim/ai-paper-scout/distill.yml?style=for-the-badge&label=weekly%20distillation&logo=githubactions&logoColor=white)](https://github.com/mohabdelkarim/ai-paper-scout/actions/workflows/distill.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/mohabdelkarim/ai-paper-scout/test.yml?style=for-the-badge&label=tests&logo=githubactions&logoColor=white)](https://github.com/mohabdelkarim/ai-paper-scout/actions/workflows/test.yml)
 [![Python](https://img.shields.io/badge/python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![arXiv](https://img.shields.io/badge/source-arXiv-B31B1B?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/)
-![Open source](https://img.shields.io/badge/open%20source-ready-16A34A?style=for-the-badge)
+[![License: MIT](https://img.shields.io/badge/license-MIT-16A34A?style=for-the-badge)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/mohabdelkarim/ai-paper-scout?style=for-the-badge)](https://github.com/mohabdelkarim/ai-paper-scout/stargazers)
+[![Topics](https://img.shields.io/badge/topics-ai%20%7C%20arxiv%20%7C%20llm-111827?style=for-the-badge)](https://github.com/mohabdelkarim/ai-paper-scout/topics)
 
 <br />
 
@@ -283,7 +286,9 @@ ai-paper-scout/
 
 Built for curious engineers who want to spend less time searching and more time building.
 
-[Explore the reports](reports/) · [View the workflow](.github/workflows/distill.yml) · [Open an issue](https://github.com/mohabdelkarim/ai-paper-scout/issues)
+[Explore the reports](reports/) · [HTML archive](reports/archive.html) · [View the workflow](.github/workflows/distill.yml) · [Open an issue](https://github.com/mohabdelkarim/ai-paper-scout/issues)
+
+**Discoverability:** GitHub topics include `ai`, `machine-learning`, `arxiv`, `llm`, `agents`, `python`, `github-actions`, and more. Star the repo if the weekly briefings are useful.
 
 <sub>Created by <a href="https://github.com/mohabdelkarim">@mohabdelkarim</a></sub>
 

@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-19",
+  "pipeline_success": true,
+  "steps": [
+    {
+      "step": "arxiv_fetch",
+      "timestamp_utc": "2026-11-19T17:48:03.613016",
+      "latency_s": 0.182,
+      "sla_threshold_s": 20.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": null,
+      "error": null
+    },
+    {
+      "step": "llm_ranking",
+      "timestamp_utc": "2026-11-19T17:48:03.796151",
+      "latency_s": 0.819,
+      "sla_threshold_s": 35.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 3433,
+      "error": null
+    },
+    {
+      "step": "llm_distill",
+      "timestamp_utc": "2026-11-19T17:48:04.616044",
+      "latency_s": 0.705,
+      "sla_threshold_s": 25.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 824,
+      "error": null
+    },
+    {
+      "step": "llm_distill",
+      "timestamp_utc": "2026-11-19T17:48:05.321483",
+      "latency_s": 0.807,
+      "sla_threshold_s": 25.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 702,
+      "error": null
+    },
+    {
+      "step": "llm_distill",
+      "timestamp_utc": "2026-11-19T17:48:06.128494",
+      "latency_s": 0.745,
+      "sla_threshold_s": 25.0,
+      "sla_ok": true,
+      "retries": 0,
+      "tokens_used": 774,
+      "error": null
+    }
+  ],
+  "quality": {
+    "ranking_fallback": false,
+    "distill_failures": 0,
+    "papers_written": 3,
+    "degraded": false
+  },
+  "summary": {
+    "total_steps": 5,
+    "sla_breaches": 0,
+    "total_retries": 0,
+    "total_tokens": 5733,
+    "total_latency_s": 3.258,
+    "errors": []
+  }
+}
